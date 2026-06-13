@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlueWelcome Admin</title>
+  <script>
+    (function(){var t=localStorage.getItem('bluewelcome_theme');
+      if(t!=='dark'&&t!=='light'){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}
+      document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- PIN Screen -->
+  <div id="pin-screen" class="pin-screen">
+    <div class="pin-card">
+      <div class="pin-card__logo">
+        <img src="assets/Logo-WiB.png" alt="Wise in Blue" height="32">
+      </div>
+      <h1 class="pin-card__title" data-t="adminTitle">BlueWelcome Admin</h1>
+      <p class="pin-card__subtitle" data-t="pinSubtitle">Enter your PIN to access the control panel</p>
+      <div class="pin-input-group">
+        <input type="password" id="pin-input" class="pin-input" maxlength="8" placeholder="••••" autocomplete="off" inputmode="numeric">
+        <p id="pin-error" class="pin-error hidden" data-t="pinError">Incorrect PIN. Please try again.</p>
+      </div>
+      <button id="pin-submit" class="pin-btn" data-t="pinAccess">Access</button>
+      <div class="lang-picker" id="pin-lang-picker"></div>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-panel" class="admin-panel hidden">
+
+    <!-- Header -->
+    <header class="admin-header">
+      <div class="admin-header__left">
+        <button id="mobile-menu-btn" class="admin-header__menu-btn" aria-label="Menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <span class="admin-header__title" data-t="adminTitle">BlueWelcome Admin</span>
+      </div>
+      <div class="admin-header__right">
+        <span id="admin-property-name" class="admin-header__property"></span>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+          <svg class="theme-toggle__sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="theme-toggle__moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="lang-picker lang-picker--sm" id="header-lang-picker"></div>
+        <button id="btn-guide" class="admin-header__btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span data-t="guideBtn">Guide</span>
+        </button>
+        <button id="btn-preview" class="admin-header__btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+          <span data-t="preview">Preview</span>
+        </button>
+        <button id="btn-download" class="admin-header__btn admin-header__btn--primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+          </svg>
+          <span data-t="save">Save guide</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-body-wrap">
+
+      <!-- Sidebar -->
+      <aside id="admin-sidebar" class="admin-sidebar">
+        <nav>
+          <ul class="admin-nav">
+            <li><a href="#" class="admin-nav__item active" data-section="property">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span data-t="navProperty">Property</span>
+            </a></li>
+            <li><a href="#" class="admin-nav__item" data-section="about">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span data-t="navAbout">About</span>
+            </a></li>
+            <li><a href="#" class="admin-nav__item" data-section="wifi">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+              <span data-t="navWifi">Wi-Fi</span>
+            </a></li>
+            <li><a href="#" class="admin-nav__item" data-section="checkin">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              <span data-t="navCheckin">Check-in</span>
+            </a></li>
+            <li><a href="#" class="admin-nav__item" data-section="checkout">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <span data-t="navCheckout">Check-out</span>
+            </a></li>
+            <li><a href="#" class="admin-nav__item" data-section="rules">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span data-t="navRules">Rules</span>
+            </a></li>
+            <li><a href="#" class="admin-nav__item" data-section="contacts">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span data-t="navContacts">Contacts</span>
+            </a></li>
+            <li><a href="#" class="admin-nav__item" data-section="nearby">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span data-t="navNearby">Nearby</span>
+            </a></li>
+            <li><a href="#" class="admin-nav__item" data-section="faq">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span data-t="navFaq">FAQ</span>
+            </a></li>
+            <li><a href="#" class="admin-nav__item" data-section="admin-settings">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+              <span data-t="navSettings">Settings</span>
+            </a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main content -->
+      <main class="admin-main">
+
+        <!-- PROPERTY -->
+        <section id="section-property" class="admin-section active">
+          <div class="admin-section__header">
+            <h2 data-t="propTitle">Property</h2>
+            <p data-t="propSubtitle">General information about the property</p>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <label for="prop-name"><span data-t="propName">Property name</span> <span class="required">*</span></label>
+              <input type="text" id="prop-name" data-t-ph="propNamePh" placeholder="e.g. Villa Rosa">
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="prop-city"><span data-t="propCity">City</span> <span class="required">*</span></label>
+                <input type="text" id="prop-city" data-t-ph="propCityPh" placeholder="e.g. Florence">
+              </div>
+              <div class="field">
+                <label for="prop-language" data-t="propLang">Default language</label>
+                <select id="prop-language">
+                  <option value="en">English</option>
+                  <option value="it">Italiano</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="prop-address" data-t="propAddress">Address</label>
+              <input type="text" id="prop-address" data-t-ph="propAddressPh" placeholder="e.g. Via delle Rose 12, 50100 Florence">
+            </div>
+            <div class="field">
+              <label for="prop-greeting" data-t="propGreeting">Welcome message</label>
+              <textarea id="prop-greeting" rows="3" data-t-ph="propGreetingPh" placeholder="e.g. Welcome to Villa Rosa! We're happy to have you."></textarea>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="prop-accent" data-t="propAccent">Main colour</label>
+                <div class="color-swatches" id="color-swatches"></div>
+                <div class="color-field">
+                  <input type="color" id="prop-accent-picker" value="#1a56db">
+                  <input type="text" id="prop-accent" placeholder="#1a56db" maxlength="7">
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label data-t="tabOrderLabel">Order of the bottom menu</label>
+              <span class="field-hint" data-t="tabOrderHint">Drag to reorder the tabs your guests see at the bottom.</span>
+              <ul class="tab-order-list" id="tab-order-list"></ul>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label data-t="propPhoto">Main photo</label>
+                <div class="single-photo" id="hero-photo-widget">
+                  <div class="single-photo__preview" id="hero-photo-preview"></div>
+                  <div class="single-photo__actions">
+                    <label class="btn-add btn-add--upload">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      <span data-t="uploadPhotos">Upload</span>
+                      <input type="file" id="hero-photo-file" accept="image/*" style="display:none">
+                    </label>
+                    <button type="button" class="btn-remove-photo hidden" id="hero-photo-remove" data-t="removePhoto">Remove</button>
+                  </div>
+                  <input type="hidden" id="prop-photo">
+                </div>
+              </div>
+              <div class="field">
+                <label data-t="propLogo">Logo (optional)</label>
+                <div class="single-photo" id="logo-photo-widget">
+                  <div class="single-photo__preview single-photo__preview--logo" id="logo-photo-preview"></div>
+                  <div class="single-photo__actions">
+                    <label class="btn-add btn-add--upload">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      <span data-t="uploadPhotos">Upload</span>
+                      <input type="file" id="logo-photo-file" accept="image/*" style="display:none">
+                    </label>
+                    <button type="button" class="btn-remove-photo hidden" id="logo-photo-remove" data-t="removePhoto">Remove</button>
+                  </div>
+                  <input type="hidden" id="prop-logo">
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label><span data-t="propGallery">Photo gallery</span></label>
+              <div id="photos-list" class="photo-gallery-list"></div>
+              <div class="photo-upload-bar">
+                <label class="btn-add btn-add--upload" id="btn-add-photo-label">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Upload photos
+                  <input type="file" id="photo-file-input" accept="image/*" multiple style="display:none">
+                </label>
+                <button class="btn-add" id="btn-add-photo-url">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Add URL
+                </button>
+              </div>
+              <span class="field-hint">Upload images or add URLs. Drag to reorder. First photo is the hero.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section id="section-about" class="admin-section">
+          <div class="admin-section__header">
+            <div class="admin-section__header-row">
+              <div>
+                <h2 data-t="aboutTitle">About</h2>
+                <p data-t="aboutSubtitle">Story of the house, hosts, neighbourhood</p>
+              </div>
+              <label class="section-toggle" data-t-title="visible" title="Show/hide this tab for guests">
+                <input type="checkbox" id="toggle-about" checked>
+                <span class="section-toggle__slider"></span>
+                <span class="section-toggle__label" data-t="visible">Visible</span>
+              </label>
+            </div>
+          </div>
+          <div class="field-group">
+            <div id="about-list" class="dynamic-list"></div>
+            <button class="btn-add" id="btn-add-about">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add section
+            </button>
+          </div>
+        </section>
+
+        <!-- WI-FI -->
+        <section id="section-wifi" class="admin-section">
+          <div class="admin-section__header">
+            <h2 data-t="wifiTitle">Wi-Fi</h2>
+            <p data-t="wifiSubtitle">Network credentials and notes</p>
+          </div>
+
+          <div class="field-group">
+            <div class="field-row">
+              <div class="field">
+                <label for="wifi-network"><span data-t="wifiNetwork">Network name (SSID)</span> <span class="required">*</span></label>
+                <input type="text" id="wifi-network" data-t-ph="wifiNetworkPh" placeholder="e.g. VillaRosa_WiFi">
+              </div>
+              <div class="field">
+                <label for="wifi-password"><span data-t="wifiPassword">Password</span> <span class="required">*</span></label>
+                <input type="text" id="wifi-password" data-t-ph="wifiPasswordPh" placeholder="e.g. villa2024!">
+              </div>
+            </div>
+            <div class="field">
+              <label for="wifi-notes" data-t="wifiNotes">Notes (optional)</label>
+              <textarea id="wifi-notes" rows="2" data-t-ph="wifiNotesPh" placeholder="e.g. Network works throughout the house and garden."></textarea>
+            </div>
+            <div class="field">
+              <label data-t="wifiQr">QR Code preview</label>
+              <div id="admin-qr-preview" class="admin-qr-preview">
+                <p class="admin-qr-preview__hint" data-t="wifiQrEmpty">Enter SSID and password to generate the QR</p>
+              </div>
+              <span class="field-hint" data-t="wifiQrHint">This QR is automatically generated from SSID and password above. Guests scan it to connect instantly.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- CHECK-IN -->
+        <section id="section-checkin" class="admin-section">
+          <div class="admin-section__header">
+            <h2 data-t="checkinTitle">Check-in</h2>
+            <p data-t="checkinSubtitle">Arrival time and instructions</p>
+          </div>
+
+          <div class="field-group">
+            <div class="field-row">
+              <div class="field">
+                <label for="checkin-time"><span data-t="checkinTime">Check-in time</span> <span class="required">*</span></label>
+                <input type="text" id="checkin-time" data-t-ph="checkinTimePh" placeholder="e.g. 15:00">
+              </div>
+              <div class="field">
+                <label for="checkin-early" data-t="checkinEarly">Early check-in info</label>
+                <input type="text" id="checkin-early" data-t-ph="checkinEarlyPh" placeholder="e.g. Contact us for availability">
+              </div>
+            </div>
+
+            <div class="field">
+              <label data-t="checkinInstr">Check-in instructions</label>
+              <div id="checkin-instructions-list" class="dynamic-list"></div>
+              <button class="btn-add" id="btn-add-checkin-instruction">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add instruction
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- CHECK-OUT -->
+        <section id="section-checkout" class="admin-section">
+          <div class="admin-section__header">
+            <h2 data-t="checkoutTitle">Check-out</h2>
+            <p data-t="checkoutSubtitle">Departure time and instructions</p>
+          </div>
+
+          <div class="field-group">
+            <div class="field-row">
+              <div class="field">
+                <label for="checkout-time"><span data-t="checkoutTime">Check-out time</span> <span class="required">*</span></label>
+                <input type="text" id="checkout-time" data-t-ph="checkoutTimePh" placeholder="e.g. 11:00">
+              </div>
+              <div class="field">
+                <label for="checkout-late" data-t="checkoutLate">Late check-out info</label>
+                <input type="text" id="checkout-late" data-t-ph="checkoutLatePh" placeholder="e.g. Contact us for availability (surcharge may apply)">
+              </div>
+            </div>
+
+            <div class="field">
+              <label data-t="checkoutInstr">Check-out instructions</label>
+              <div id="checkout-instructions-list" class="dynamic-list"></div>
+              <button class="btn-add" id="btn-add-checkout-instruction">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add instruction
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- RULES -->
+        <section id="section-rules" class="admin-section">
+          <div class="admin-section__header">
+            <div class="admin-section__header-row">
+              <div>
+                <h2 data-t="rulesTitle">Rules</h2>
+                <p data-t="rulesSubtitle">House rules for guests</p>
+              </div>
+              <label class="section-toggle" data-t-title="visible" title="Show/hide this tab for guests">
+                <input type="checkbox" id="toggle-rules" checked>
+                <span class="section-toggle__slider"></span>
+                <span class="section-toggle__label" data-t="visible">Visible</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <div id="rules-list" class="dynamic-list"></div>
+              <button class="btn-add" id="btn-add-rule">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add rule
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONTACTS -->
+        <section id="section-contacts" class="admin-section">
+          <div class="admin-section__header">
+            <h2 data-t="contactsTitle">Contacts</h2>
+            <p data-t="contactsSubtitle">At least one contact required. Types: owner, emergency, medical, other.</p>
+          </div>
+
+          <div class="field-group">
+            <div id="contacts-list" class="dynamic-list contacts-list"></div>
+            <button class="btn-add" id="btn-add-contact">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add contact
+            </button>
+          </div>
+        </section>
+
+        <!-- NEARBY -->
+        <section id="section-nearby" class="admin-section">
+          <div class="admin-section__header">
+            <h2 data-t="nearbyTitle">Nearby</h2>
+            <p data-t="nearbySubtitle">Map, restaurants, attractions and transport</p>
+          </div>
+
+          <!-- Map sub-section -->
+          <div class="field-group">
+            <h3 class="field-group__title" data-t="mapTitle">How to find us</h3>
+            <div class="field">
+              <label for="map-gmaps-url" data-t="mapUrl">Google Maps link</label>
+              <input type="url" id="map-gmaps-url" data-t-ph="mapUrlPh" placeholder="https://goo.gl/maps/...">
+            </div>
+            <div class="field">
+              <label for="map-embed-url" data-t="mapEmbed">Map to show in the guide (optional)</label>
+              <input type="url" id="map-embed-url" data-t-ph="mapEmbedPh" placeholder="https://www.google.com/maps/embed?pb=...">
+            </div>
+            <div class="field">
+              <label for="map-notes" data-t="mapNotes">Walking notes</label>
+              <input type="text" id="map-notes" data-t-ph="mapNotesPh" placeholder="e.g. Historic centre is 10 minutes on foot.">
+            </div>
+            <div class="field field--wide">
+              <label for="map-directions-text" data-t="mapDirections">Detailed directions</label>
+              <textarea id="map-directions-text" rows="3" data-t-ph="mapDirectionsPh" placeholder="e.g. From the main square, take Via Roma, turn left after the church. The blue gate is on your right."></textarea>
+            </div>
+            <div class="field field--wide">
+              <label data-t="mapPhotos">Directions photos (gate, entrance, parking…)</label>
+              <div id="direction-photos-dropzone" class="photo-dropzone">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span data-t="dragHere">Drag photos here, or use the buttons below</span>
+              </div>
+              <div id="direction-photos-list"></div>
+              <div class="photo-upload-bar">
+                <label class="btn-add btn-add--upload" id="btn-add-dirphoto-label">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <span data-t="uploadPhotos">Upload photos</span>
+                  <input type="file" id="dirphoto-file-input" accept="image/*" multiple style="display:none">
+                </label>
+                <button type="button" class="btn-add" id="btn-add-direction-photo">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span data-t="addUrl">Add URL</span>
+                </button>
+              </div>
+              <p class="field-hint" data-t="mapPhotosHint">Upload from your phone/PC (photos are compressed automatically) or paste an image URL. Each photo can have an optional caption.</p>
+            </div>
+          </div>
+
+          <!-- Restaurants sub-section -->
+          <div class="field-group">
+            <div class="field-group__title-row">
+              <h3 class="field-group__title" data-t="restaurantsTitle">Restaurants</h3>
+              <label class="section-toggle section-toggle--sm" data-t-title="visible">
+                <input type="checkbox" id="toggle-restaurants" checked>
+                <span class="section-toggle__slider"></span>
+                <span class="section-toggle__label" data-t="visible">Visible</span>
+              </label>
+            </div>
+            <div class="field">
+              <label for="ext-restaurants" data-t="extLinkLabel">Or link your own guide (optional)</label>
+              <input type="url" id="ext-restaurants" data-t-ph="extLinkPh" placeholder="https://your-site.com/area-guide">
+              <span class="field-hint" data-t="extLinkHint">If you fill this in, guests see a button to your guide instead of the list below.</span>
+            </div>
+            <div id="restaurants-list" class="dynamic-list"></div>
+            <button class="btn-add" id="btn-add-restaurant">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add restaurant
+            </button>
+          </div>
+
+          <!-- Attractions sub-section -->
+          <div class="field-group">
+            <div class="field-group__title-row">
+              <h3 class="field-group__title" data-t="attractionsTitle">Attractions</h3>
+              <label class="section-toggle section-toggle--sm" data-t-title="visible">
+                <input type="checkbox" id="toggle-attractions" checked>
+                <span class="section-toggle__slider"></span>
+                <span class="section-toggle__label" data-t="visible">Visible</span>
+              </label>
+            </div>
+            <div class="field">
+              <label for="ext-attractions" data-t="extLinkLabel">Or link your own guide (optional)</label>
+              <input type="url" id="ext-attractions" data-t-ph="extLinkPh" placeholder="https://your-site.com/area-guide">
+              <span class="field-hint" data-t="extLinkHint">If you fill this in, guests see a button to your guide instead of the list below.</span>
+            </div>
+            <div id="attractions-list" class="dynamic-list"></div>
+            <button class="btn-add" id="btn-add-attraction">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add attraction
+            </button>
+          </div>
+
+          <!-- Transport sub-section -->
+          <div class="field-group">
+            <div class="field-group__title-row">
+              <h3 class="field-group__title" data-t="transportTitle">Transport</h3>
+              <label class="section-toggle section-toggle--sm" data-t-title="visible">
+                <input type="checkbox" id="toggle-transport" checked>
+                <span class="section-toggle__slider"></span>
+                <span class="section-toggle__label" data-t="visible">Visible</span>
+              </label>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="transport-parking" data-t="tParking">Parking</label>
+                <textarea id="transport-parking" rows="2" placeholder="..."></textarea>
+              </div>
+              <div class="field">
+                <label for="transport-bus" data-t="tBus">Bus</label>
+                <textarea id="transport-bus" rows="2" placeholder="..."></textarea>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="transport-taxi" data-t="tTaxi">Taxi</label>
+                <textarea id="transport-taxi" rows="2" placeholder="..."></textarea>
+              </div>
+              <div class="field">
+                <label for="transport-train" data-t="tTrain">Train</label>
+                <textarea id="transport-train" rows="2" placeholder="..."></textarea>
+              </div>
+            </div>
+            <div class="field">
+              <label for="transport-airport" data-t="tAirport">Airport</label>
+              <textarea id="transport-airport" rows="2" placeholder="..."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- FAQ -->
+        <section id="section-faq" class="admin-section">
+          <div class="admin-section__header">
+            <div class="admin-section__header-row">
+              <div>
+                <h2 data-t="faqTitle">FAQ</h2>
+                <p data-t="faqSubtitle">Frequently asked questions</p>
+              </div>
+              <label class="section-toggle" data-t-title="visible" title="Show/hide this tab for guests">
+                <input type="checkbox" id="toggle-faq" checked>
+                <span class="section-toggle__slider"></span>
+                <span class="section-toggle__label" data-t="visible">Visible</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div id="faq-list" class="dynamic-list"></div>
+            <button class="btn-add" id="btn-add-faq">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add FAQ
+            </button>
+          </div>
+        </section>
+
+        <!-- ADMIN SETTINGS -->
+        <section id="section-admin-settings" class="admin-section">
+          <div class="admin-section__header">
+            <h2 data-t="settingsTitle">Admin Settings</h2>
+            <p data-t="settingsSubtitle">Access PIN and admin preferences</p>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <label for="admin-pin-new" data-t="pinNew">Admin PIN</label>
+              <input type="password" id="admin-pin-new" data-t-ph="pinNewPh" placeholder="Enter new PIN" maxlength="8" inputmode="numeric" autocomplete="new-password">
+              <span class="field-hint" data-t="pinNewHint">Leave empty to keep the current PIN. Min 4 digits.</span>
+            </div>
+            <div class="field">
+              <label for="admin-pin-confirm" data-t="pinConfirm">Confirm PIN</label>
+              <input type="password" id="admin-pin-confirm" data-t-ph="pinConfirmPh" placeholder="Repeat new PIN" maxlength="8" inputmode="numeric" autocomplete="new-password">
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- Save bar -->
+    <div class="save-bar">
+      <span id="save-bar-msg" class="save-bar__msg"></span>
+      <button id="btn-reset" class="save-bar__btn save-bar__btn--secondary" data-t="resetSaved">Undo changes</button>
+      <button id="btn-save-download" class="save-bar__btn save-bar__btn--primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+        </svg>
+        <span data-t="save">Save guide</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Guide modal -->
+  <div id="guide-modal" class="guide-modal hidden">
+    <div class="guide-modal__backdrop" id="guide-modal-backdrop"></div>
+    <div class="guide-modal__card" role="dialog" aria-modal="true">
+      <div class="guide-modal__header">
+        <h2 data-t="guideTitle">How to use this editor</h2>
+        <button id="guide-modal-close" class="guide-modal__close" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="guide-modal__body">
+        <p class="guide-modal__intro" data-t="guideIntro"></p>
+        <ol class="guide-steps">
+          <li data-t="guideStepProperty"></li>
+          <li data-t="guideStepAbout"></li>
+          <li data-t="guideStepWifi"></li>
+          <li data-t="guideStepCheckin"></li>
+          <li data-t="guideStepCheckout"></li>
+          <li data-t="guideStepRules"></li>
+          <li data-t="guideStepContacts"></li>
+          <li data-t="guideStepNearby"></li>
+          <li data-t="guideStepFaq"></li>
+          <li data-t="guideStepSettings"></li>
+          <li data-t="guideStepPhotos"></li>
+          <li data-t="guideStepSave"></li>
+        </ol>
+      </div>
+      <div class="guide-modal__footer">
+        <button id="guide-modal-ok" class="save-bar__btn save-bar__btn--primary" data-t="guideClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/theme.js"></script>
+  <script src="js/vendor/qrcode.min.js"></script>
+  <script src="js/admin-i18n.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

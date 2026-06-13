@@ -1,0 +1,83 @@
+{
+  "property": {
+    "name": "Property Name",
+    "city": "City",
+    "address": "Street Address, Postcode City Province",
+    "photo": "assets/property-photo.jpg",
+    "photos": [],
+    "greeting": "Welcome! We are delighted to have you as our guest.",
+    "accent_color": "#1a56db",
+    "logo": "",
+    "language": "en"
+  },
+  "wifi": {
+    "network": "WiFi_Network_Name",
+    "password": "wifipassword",
+    "notes": ""
+  },
+  "checkin": {
+    "time": "15:00",
+    "early_checkin": "Contact us to check availability",
+    "instructions": [
+      "Step 1",
+      "Step 2"
+    ]
+  },
+  "checkout": {
+    "time": "11:00",
+    "late_checkout": "Contact us to check availability (extra charge may apply)",
+    "instructions": [
+      "Step 1",
+      "Step 2"
+    ]
+  },
+  "rules": [
+    "No smoking (including balcony)",
+    "No pets allowed",
+    "Quiet hours from 22:00 to 08:00"
+  ],
+  "contacts": [
+    {
+      "name": "Owner Name",
+      "phone": "+39 333 0000000",
+      "whatsapp": true,
+      "type": "owner",
+      "available": "9:00–21:00"
+    },
+    {
+      "name": "Emergency services",
+      "phone": "112",
+      "whatsapp": false,
+      "type": "emergency",
+      "available": "24/7"
+    }
+  ],
+  "map": {
+    "google_maps_url": "",
+    "embed_url": "",
+    "walking_notes": "",
+    "directions_text": "",
+    "directions_photos": []
+  },
+  "tab_order": ["home", "info", "contacts", "nearby", "faq"],
+  "external_links": {
+    "restaurants": "",
+    "attractions": ""
+  },
+  "restaurants": [],
+  "attractions": [],
+  "transport": {
+    "parking": "",
+    "bus": "",
+    "taxi": "",
+    "train": "",
+    "airport": ""
+  },
+  "faq": [
+    {
+      "question": "Is there air conditioning?",
+      "answer": "Yes, in every room."
+    }
+  ],
+  "admin_pin": "1234"
+}

@@ -1,0 +1,5 @@
+# Le pagine cliente sono servite via percorso: dominio/nomecliente → guest (index)
+# Per ora la guida è una sola (config.json). Quando arriverà il multi-tenant (Fase 3),
+# il routing leggerà il nome dal percorso. Intanto qualsiasi percorso serve index.html.
+/admin    /admin.html   200
+/*        /index.html   200

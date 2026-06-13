@@ -1,0 +1,6 @@
+# File che NON vanno su GitHub
+node_modules/
+.playwright-mcp/
+.DS_Store
+Thumbs.db
+*.log

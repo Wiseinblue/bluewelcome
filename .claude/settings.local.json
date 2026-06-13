@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:cdnjs.cloudflare.com)",
+      "Bash(node -e ' *)",
+      "Bash(npx --yes serve .)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:62498/admin.html)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:62498/admin.html/)",
+      "Bash(curl -s http://localhost:62498/config.json)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('admin_pin:', repr\\(d.get\\('admin_pin'\\)\\)\\)\")",
+      "Bash(findstr \"admin_pin\")",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_type",
+      "Bash(npx serve *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:7890/)",
+      "Bash(python -m http.server 7890)",
+      "mcp__playwright__browser_evaluate",
+      "Bash(npx --yes serve . -p 3000)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:53640/admin.html)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -L http://localhost:53640/admin.html)",
+      "PowerShell(robocopy $src $dst /E /COPYALL)",
+      "PowerShell($dst = \"C:\\\\Users\\\\Stefano\\\\.claude\\\\projects\\\\c--Users-Stefano-Documents-Lavoro-Wise-in-Blue-Programmi-StayGuide-Prototipo\")",
+      "PowerShell($src = \"C:\\\\Users\\\\Stefano\\\\.claude\\\\projects\\\\c--Users-Stefano-Documents-Lavoro-Wise-in-Blue-Programmi-StayGuide\")",
+      "PowerShell(robocopy $src $dst /E)"
+    ]
+  }
+}

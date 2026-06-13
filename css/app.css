@@ -1,0 +1,112 @@
+/* ===== GOOGLE FONTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ===== BASE ===== */
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  padding-bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom) + 16px);
+}
+
+/* ===== SECTIONS (main tab panels) ===== */
+.section {
+  display: none;
+  min-height: calc(100vh - var(--tabbar-height) - 52px);
+  animation: fadeIn var(--transition-base) ease;
+}
+
+.section.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== SUB-SECTIONS (sub-tab panels) ===== */
+.sub-section {
+  display: none;
+  padding: var(--space-4);
+  animation: fadeIn var(--transition-base) ease;
+}
+
+.sub-section.active {
+  display: block;
+}
+
+/* ===== HOME SECTION (no padding - hero is edge-to-edge) ===== */
+#section-home {
+  padding: 0;
+}
+
+#section-home .section-inner {
+  padding: var(--space-4);
+}
+
+/* ===== NEARBY SECTION ===== */
+#section-nearby .sub-tab-content {
+  padding: var(--space-4);
+}
+
+/* ===== CONTACTS SECTION ===== */
+#section-contacts {
+  padding: var(--space-4);
+}
+
+/* ===== FAQ SECTION ===== */
+#section-faq {
+  padding: var(--space-4);
+}
+
+/* ===== INFO SECTION ===== */
+#section-info {
+  padding: 0;
+}
+
+/* ===== MAP IFRAME WRAPPER ===== */
+.map-wrapper {
+  padding: var(--space-4);
+}
+
+/* ===== UTILITY ===== */
+.hidden {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* ===== CARD ENTRANCE ANIMATION ===== */
+.card-enter {
+  animation: cardEnter 200ms ease forwards;
+}
+
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== SPACER ===== */
+.spacer {
+  height: var(--space-4);
+}

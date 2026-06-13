@@ -1,0 +1,170 @@
+{
+  "property": {
+    "name": "Villa Rosa",
+    "city": "Florence",
+    "address": "Via delle Rose 12, 50100 Florence FI",
+    "photo": "assets/property-photo.jpg",
+    "photos": [],
+    "greeting": "Welcome to Villa Rosa! We are delighted to have you as our guest.",
+    "accent_color": "#1a56db",
+    "logo": "",
+    "language": "en",
+    "about": [
+      {
+        "title": "The House",
+        "text": "Villa Rosa is a traditional Florentine townhouse dating back to the 19th century. Lovingly restored, it blends original features — terracotta floors, vaulted ceilings — with all modern comforts."
+      },
+      {
+        "title": "Your Hosts",
+        "text": "We are Marco and Sofia. We have lived in Florence all our lives and love sharing our city with guests from around the world. Don't hesitate to reach out — we are always happy to give tips!"
+      },
+      {
+        "title": "The Neighbourhood",
+        "text": "You are staying in the lively Santa Croce district, just steps from the famous basilica. Local cafés, markets and trattorias are all within a short walk."
+      }
+    ]
+  },
+  "wifi": {
+    "network": "VillaRosa_WiFi",
+    "password": "villa2024!",
+    "notes": "The network covers the entire house and garden."
+  },
+  "checkin": {
+    "time": "15:00",
+    "early_checkin": "Contact us to check availability",
+    "instructions": [
+      "Find the key box with the code next to the main door",
+      "The code is: 1234",
+      "Enter and leave your ID document on the table",
+      "Parking is in the rear courtyard"
+    ]
+  },
+  "checkout": {
+    "time": "11:00",
+    "late_checkout": "Contact us to check availability (extra charge may apply)",
+    "instructions": [
+      "Leave the keys on the kitchen table",
+      "Take out the rubbish from the bin under the sink",
+      "Close all windows and the main front door"
+    ]
+  },
+  "rules": [
+    "Non-smoking property (including balcony)",
+    "No pets allowed",
+    "Quiet hours from 22:00 to 08:00",
+    "No parties or events allowed",
+    "Maximum 4 guests"
+  ],
+  "contacts": [
+    {
+      "name": "Marco (owner)",
+      "phone": "+39 333 1234567",
+      "whatsapp": true,
+      "type": "owner",
+      "available": "9:00–21:00"
+    },
+    {
+      "name": "Emergency services",
+      "phone": "112",
+      "whatsapp": false,
+      "type": "emergency",
+      "available": "24/7"
+    },
+    {
+      "name": "Nearest hospital",
+      "phone": "055 794111",
+      "whatsapp": false,
+      "type": "medical",
+      "available": "24/7"
+    }
+  ],
+  "tab_order": ["home", "info", "contacts", "nearby", "faq"],
+  "external_links": {
+    "restaurants": "",
+    "attractions": ""
+  },
+  "map": {
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=Via+delle+Rose+12,+Florence,+Italy",
+    "embed_url": "",
+    "walking_notes": "The historic city centre is a 10-minute walk away.",
+    "directions_text": "From the train station, take Via Roma towards the cathedral.\nAfter the small square, turn left into Via delle Rose.\nThe house is the second building on the right, with a blue gate.",
+    "directions_photos": [
+      {
+        "url": "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=800",
+        "caption": "The blue gate — entrance on your right"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800",
+        "caption": "Parking is in the courtyard at the back"
+      }
+    ]
+  },
+  "restaurants": [
+    {
+      "name": "Trattoria da Mario",
+      "category": "Tuscan cuisine",
+      "price_range": "medium",
+      "distance": "5 min walk",
+      "description": "Great for lunch. Family atmosphere — book ahead on Fridays.",
+      "google_maps_url": "https://goo.gl/maps/YYYYYYY",
+      "phone": "055 218550"
+    },
+    {
+      "name": "Gelateria Vivoli",
+      "category": "Ice cream",
+      "price_range": "low",
+      "distance": "8 min walk",
+      "description": "Florence's best artisan gelato since 1930.",
+      "google_maps_url": "https://goo.gl/maps/ZZZZZZZ",
+      "phone": ""
+    }
+  ],
+  "attractions": [
+    {
+      "name": "Uffizi Gallery",
+      "category": "Museum",
+      "distance": "10 min walk",
+      "description": "One of the most important museums in the world. Book online in advance.",
+      "website": "https://www.uffizi.it",
+      "tip": "Arrive right at opening time to avoid the queues."
+    },
+    {
+      "name": "Piazzale Michelangelo",
+      "category": "Viewpoint",
+      "distance": "25 min walk",
+      "description": "Breathtaking panoramic view over Florence. Perfect at sunset.",
+      "website": "",
+      "tip": "Bring a bottle of wine and enjoy the sunset."
+    }
+  ],
+  "transport": {
+    "parking": "Free private parking in the courtyard. Access from Via Laterale.",
+    "bus": "Line 14 stop 200m away (towards the centre every 10 minutes).",
+    "taxi": "Use the MyTaxi app or call 055 4390.",
+    "train": "Santa Maria Novella station is 15 minutes on foot or 5 by taxi.",
+    "airport": "Amerigo Vespucci Airport: 20 min by taxi (approx. €25)."
+  },
+  "faq": [
+    {
+      "question": "Is there air conditioning?",
+      "answer": "Yes, in every room. The remote control is in the bedside table drawer."
+    },
+    {
+      "question": "Where do I put the rubbish?",
+      "answer": "Coloured bins on the street: green (glass/cans), yellow (plastic), blue (paper), grey (general waste)."
+    },
+    {
+      "question": "Can I check in early?",
+      "answer": "Message us on WhatsApp — we will do our best to accommodate you."
+    }
+  ],
+  "sections": {
+    "about": true,
+    "rules": true,
+    "restaurants": true,
+    "attractions": true,
+    "transport": true,
+    "faq": true
+  },
+  "admin_pin": "1234"
+}
