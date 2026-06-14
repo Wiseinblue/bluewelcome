@@ -17,19 +17,20 @@
 </head>
 <body>
 
-  <!-- PIN Screen -->
+  <!-- Login Screen (email + password) -->
   <div id="pin-screen" class="pin-screen">
     <div class="pin-card">
       <div class="pin-card__logo">
         <img src="assets/Logo-WiB.png" alt="Wise in Blue" height="32">
       </div>
       <h1 class="pin-card__title" data-t="adminTitle">BlueWelcome Admin</h1>
-      <p class="pin-card__subtitle" data-t="pinSubtitle">Enter your PIN to access the control panel</p>
-      <div class="pin-input-group">
-        <input type="password" id="pin-input" class="pin-input" maxlength="8" placeholder="••••" autocomplete="off" inputmode="numeric">
-        <p id="pin-error" class="pin-error hidden" data-t="pinError">Incorrect PIN. Please try again.</p>
+      <p class="pin-card__subtitle" data-t="loginSubtitle">Sign in to manage your guide</p>
+      <div class="login-fields">
+        <input type="email" id="login-email" class="login-input" data-t-ph="loginEmailPh" placeholder="Email" autocomplete="username">
+        <input type="password" id="login-password" class="login-input" data-t-ph="loginPasswordPh" placeholder="Password" autocomplete="current-password">
+        <p id="pin-error" class="pin-error hidden" data-t="loginError">Wrong email or password.</p>
       </div>
-      <button id="pin-submit" class="pin-btn" data-t="pinAccess">Access</button>
+      <button id="pin-submit" class="pin-btn" data-t="loginBtn">Sign in</button>
       <div class="lang-picker" id="pin-lang-picker"></div>
     </div>
   </div>
@@ -613,6 +614,9 @@
   <!-- Toast -->
   <div id="toast" class="toast hidden"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/flags.js"></script>
   <script src="js/vendor/qrcode.min.js"></script>

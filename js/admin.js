@@ -2,61 +2,78 @@
 
 let currentConfig = null;
 let savedConfig = null;
+let currentGuideId = null;   // id della guida nel DB (Supabase)
+let currentGuideSlug = null; // slug nell'URL
 
-// ─── PIN ──────────────────────────────────────────────────────────────────────
+// ─── LOGIN (email + password, Supabase) ─────────────────────────────────────────
 
 function initPin() {
-  const pinInput = document.getElementById('pin-input');
-  const pinSubmit = document.getElementById('pin-submit');
-  const pinError = document.getElementById('pin-error');
+  const emailInput = document.getElementById('login-email');
+  const pwInput = document.getElementById('login-password');
+  const submit = document.getElementById('pin-submit');
+  const errEl = document.getElementById('pin-error');
 
-  function attemptLogin() {
-    const entered = pinInput.value.trim();
-    if (!currentConfig) {
-      showPinError('Config not loaded yet. Please wait.');
+  async function attemptLogin() {
+    const email = emailInput.value.trim();
+    const password = pwInput.value;
+    if (!email || !password) { showErr(at('loginError')); return; }
+
+    submit.disabled = true;
+    const { error } = await BlueWelcomeDB.signIn(email, password);
+    submit.disabled = false;
+
+    if (error) {
+      showErr(at('loginError'));
+      pwInput.value = '';
       return;
     }
-    const correct = String(currentConfig.admin_pin ?? '1234');
-    console.log('[admin] PIN check — entered:', entered, 'correct:', correct, 'admin_pin field:', currentConfig.admin_pin);
-    if (entered === correct) {
-      document.getElementById('pin-screen').classList.add('hidden');
-      document.getElementById('admin-panel').classList.remove('hidden');
-      populateForm(currentConfig);
-      updateQRPreview();
-    } else {
-      showPinError('Incorrect PIN. Please try again.');
-      pinInput.value = '';
-    }
+    await enterAdmin();
   }
 
-  function showPinError(msg) {
-    pinError.textContent = msg;
-    pinError.classList.remove('hidden');
-    pinInput.classList.add('shake');
-    pinInput.addEventListener('animationend', () => pinInput.classList.remove('shake'), { once: true });
+  function showErr(msg) {
+    errEl.textContent = msg;
+    errEl.classList.remove('hidden');
   }
 
-  pinSubmit.addEventListener('click', attemptLogin);
-  pinInput.addEventListener('keydown', (e) => {
+  submit.addEventListener('click', attemptLogin);
+  [emailInput, pwInput].forEach(inp => inp.addEventListener('keydown', (e) => {
+    errEl.classList.add('hidden');
     if (e.key === 'Enter') attemptLogin();
-    pinError.classList.add('hidden');
-  });
+  }));
 }
 
-// ─── Config loading ───────────────────────────────────────────────────────────
+// Entra nel pannello: carica la guida del proprietario dal DB e popola il form.
+async function enterAdmin() {
+  await loadGuideFromDB();
+  document.getElementById('pin-screen').classList.add('hidden');
+  document.getElementById('admin-panel').classList.remove('hidden');
+  populateForm(currentConfig);
+  updateQRPreview();
+}
 
-async function loadAdminConfig() {
-  try {
-    const res = await fetch('config.json?t=' + Date.now());
-    if (!res.ok) throw new Error('fetch failed');
-    const config = await res.json();
-    currentConfig = JSON.parse(JSON.stringify(config));
-    savedConfig = JSON.parse(JSON.stringify(config));
-  } catch {
-    showToast('Could not load config.json', 'error');
+// ─── Caricamento guida dal database ─────────────────────────────────────────────
+
+async function loadGuideFromDB() {
+  const guide = await BlueWelcomeDB.getMyGuide();
+  if (guide) {
+    currentGuideId = guide.id;
+    currentGuideSlug = guide.slug;
+    currentConfig = JSON.parse(JSON.stringify(guide.config || {}));
+    savedConfig = JSON.parse(JSON.stringify(currentConfig));
+  } else {
+    // Proprietario senza guida ancora: parte da una vuota (verrà creata al primo salvataggio)
+    currentGuideId = null;
+    currentGuideSlug = null;
     currentConfig = getEmptyConfig();
     savedConfig = getEmptyConfig();
   }
+}
+
+// Mantengo il vecchio nome per compatibilità con init(): ora non fa il fetch del file.
+async function loadAdminConfig() {
+  // Il caricamento vero avviene dopo il login, in loadGuideFromDB().
+  currentConfig = getEmptyConfig();
+  savedConfig = getEmptyConfig();
 }
 
 function getEmptyConfig() {
@@ -804,24 +821,13 @@ function esc(str) {
 // ─── Action buttons ───────────────────────────────────────────────────────────
 
 function initActions() {
-  document.getElementById('btn-download').addEventListener('click', () => {
-    const config = buildConfigFromForm();
-    if (!config) return;
-    downloadConfig(config);
-    showToast('config.json downloaded successfully');
-  });
-
-  document.getElementById('btn-save-download').addEventListener('click', () => {
-    const config = buildConfigFromForm();
-    if (!config) return;
-    downloadConfig(config);
-    showToast('config.json downloaded successfully');
-  });
+  document.getElementById('btn-download').addEventListener('click', saveToCloud);
+  document.getElementById('btn-save-download').addEventListener('click', saveToCloud);
 
   document.getElementById('btn-reset').addEventListener('click', () => {
-    if (confirm('Reset all changes to the last saved config?')) {
+    if (confirm(at('confirmReset'))) {
       populateForm(savedConfig);
-      showToast('Form reset to saved config');
+      showToast(at('saved'));
     }
   });
 
@@ -831,6 +837,36 @@ function initActions() {
     localStorage.setItem('bluewelcome_preview_config', JSON.stringify(config));
     window.open('index.html', '_blank');
   });
+}
+
+// Salva la guida su Supabase (crea la guida la prima volta se non esiste).
+async function saveToCloud() {
+  const config = buildConfigFromForm();
+  if (!config) return;
+
+  // Se è la prima guida del proprietario, chiedi uno slug (nome nell'URL).
+  if (!currentGuideId) {
+    let slug = prompt(at('askSlug'), (config.property?.name || 'guide')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''));
+    if (!slug) return;
+    slug = slug.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    const { data, error } = await BlueWelcomeDB.createGuide(slug, config);
+    if (error) {
+      showToast(error.message.includes('duplicate') ? at('slugTaken') : at('saveError'), 'error');
+      return;
+    }
+    currentGuideId = data.id;
+    currentGuideSlug = data.slug;
+    savedConfig = JSON.parse(JSON.stringify(config));
+    showToast(at('saved'));
+    return;
+  }
+
+  // Guida già esistente: aggiorna
+  const { error } = await BlueWelcomeDB.saveGuide(currentGuideId, config);
+  if (error) { showToast(at('saveError'), 'error'); return; }
+  savedConfig = JSON.parse(JSON.stringify(config));
+  showToast(at('saved'));
 }
 
 // ─── Add-item buttons ─────────────────────────────────────────────────────────

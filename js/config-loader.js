@@ -7,6 +7,16 @@ const REQUIRED_FIELDS = [
   'checkout.time',
 ];
 
+// Estrae lo slug dal percorso: dominio/villarosa → "villarosa".
+// Ignora index.html, admin e percorsi vuoti.
+function getSlugFromPath() {
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  const last = parts[parts.length - 1] || '';
+  if (!last || last === 'index.html' || last === 'admin' || last === 'admin.html') return null;
+  if (last.includes('.')) return null; // file (es. .html, .json)
+  return last.toLowerCase();
+}
+
 function getNestedValue(obj, path) {
   return path.split('.').reduce((acc, key) => acc && acc[key], obj);
 }
@@ -60,6 +70,22 @@ async function loadConfig() {
         return config;
       }
     } catch { /* fallthrough */ }
+  }
+
+  // Prova a caricare la guida da Supabase in base allo slug nell'URL (es. /villarosa).
+  // Se non c'è uno slug o il DB non risponde, ricade su config.json (demo).
+  const slug = getSlugFromPath();
+  if (slug && typeof BlueWelcomeDB !== 'undefined') {
+    try {
+      const row = await BlueWelcomeDB.getGuideBySlug(slug);
+      if (row && row.config) {
+        config = row.config;
+        localStorage.setItem('bluewelcome_config', JSON.stringify(config));
+        applyAccentColor(config);
+        window.STAY_CONFIG = config;
+        return config;
+      }
+    } catch { /* fallthrough a config.json */ }
   }
 
   try {

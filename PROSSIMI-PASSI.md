@@ -55,6 +55,17 @@ Obiettivo: pannello usabile da un proprietario non-tecnico. Deciso insieme:
 
 > Promemoria: dopo il `git push`, Netlify aggiorna l'anteprima online da solo.
 
+### Coda di follow-up risolta il 2026-06-14
+- [x] **Bug nav "vero" (desktop)**: la causa era CSS — `#section-contacts { display:grid }` nella
+  media query ≥768px (ID, priorità alta) ignorava `.section.active` → contacts restava visibile
+  impilata SOLO su desktop (per questo non si vedeva testando mobile). Limitato a `.active`.
+- [x] **Service worker cache-first nascondeva gli aggiornamenti** → riscritto network-first per
+  HTML/CSS/JS (v4). Vedi memoria `pwa-service-worker-cache-trap`. **Vale per tutti i programmi Blue.**
+- [x] **Emoji-bandiera invisibili su Windows** → bandiere SVG (`js/flags.js`). Vedi memoria
+  `emoji-bandiere-non-su-windows`. Riusare `flags.js` nei prossimi programmi con selettore lingua.
+- Nota cache: dopo un deploy, se non si vedono le modifiche → finestra incognito, oppure
+  F12 → Application → Service Workers → Unregister → Ctrl+F5.
+
 ---
 
 ## (storico) DA SISTEMARE — emersi dall'anteprima online (2026-06-13)
@@ -94,7 +105,28 @@ per decidere QUALI campi rendere sovrascrivibili.
       la guida ospite mostra il pulsante "Scopri la zona →" (`discoverArea`) verso quel sito invece
       dell'elenco. Dato in `config.external_links.{restaurants,attractions}`. Per-sezione. Testato.
 
-## Da fare PRIMA del lancio — siamo in FASE 3 del PERCORSO (Supabase)
+## FASE 3 — Supabase (IN CORSO, base completata 2026-06-14)
+
+**Progetto Supabase:** `bluewelcome` (ref `nmevhspourehvvxlxksm`), region Frankfurt, piano free.
+URL: `https://nmevhspourehvvxlxksm.supabase.co` · publishable key in `js/supabase-config.js` (pubblica, ok).
+Schema in `supabase/schema.sql` (tabella `guides`, RLS, GRANT). Modello: **gestito** (account creati da WiB).
+
+- [x] **Schema DB**: tabella `guides` (owner_id, slug, config jsonb). RLS: ospite legge, proprietario
+      scrive solo le sue. GRANT a anon/authenticated (servivano oltre alle policy). Testato.
+- [x] **Login email/password** (Supabase Auth) al posto del PIN. `js/supabase-client.js` + `initPin` riscritto.
+- [x] **Salvataggio reale**: "Save guide" scrive su Supabase (`saveToCloud`). Prima guida → chiede uno slug
+      e la crea. Testato: Villa Test salvata e riletta dal DB.
+- [x] **Guida ospite legge dal DB**: `config-loader.js` legge per slug dall'URL (`getSlugFromPath` +
+      `getGuideBySlug`), fallback a config.json (demo). Testato.
+- [x] Primo account proprietario di test: `info@wiseinblue.com` (creato in Supabase Auth, auto-confirm).
+- [ ] **Da fare online**: il `_redirects` Netlify deve mappare gli slug → index.html (già presente
+      `/* /index.html 200`, verificare che `/villatest` carichi). 
+- [ ] **Foto su Supabase Storage** (ora sono ancora base64 nel config): vedi sezione foto sotto.
+- [ ] **Ping anti-pausa** Supabase (free va in pausa dopo 7gg inattività).
+- [ ] **Multi-cottage** (Thalassa Green) — quando la base è solida.
+- [ ] Pulire: `admin_pin` nel config non serve più (login vero); `config.json` resta solo come demo.
+
+## (storico) Da fare PRIMA del lancio — FASE 3 del PERCORSO (Supabase)
 
 ### Foto: passaggio da base64-nel-config a Supabase Storage (decisione 2026-06-13)
 - **Compressione automatica: GIÀ FATTA** — `resizeImageToBase64` in `admin.js` ridimensiona a max 1200px
