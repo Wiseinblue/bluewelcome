@@ -127,6 +127,28 @@ Schema in `supabase/schema.sql` (tabella `guides`, RLS, GRANT). Modello: **gesti
       SQL bucket+policy in `supabase/storage.sql`. Testato: foto su Storage, URL pubblico raggiungibile.
 - [x] **Ping anti-pausa** (2026-06-14): GitHub Actions `.github/workflows/keep-supabase-awake.yml`,
       pinga Supabase ogni giorno alle 06:00 UTC (+ run manuale). Si attiva da solo dopo il push.
+- [x] **Sezione "Area guide"** (2026-06-14): sub-tab in Explore con pulsante "Scopri la zona" verso
+      sito esterno o PDF. Admin: link + upload PDF (`uploadFile`). Config `area_guide.{title,url}`.
+- [x] **Rete di sicurezza salvataggio** (2026-06-14): `saveGuide` verifica la sessione e usa `.select()`
+      per non fingere "salvato" se l'update tocca 0 righe; `saveToCloud` ha un GUARD anti-vuoto
+      (non salva se il form è vuoto ma la guida salvata aveva contenuti). Messaggi `emptyGuard`/`sessionExpired`.
+
+## ⚠️ DA VERIFICARE LA PROSSIMA VOLTA (sessione pulita) — 2026-06-14
+
+Durante i test di oggi è successo un pasticcio: i test diagnostici ripetuti (service worker che
+rigiocava richieste vecchie + cache del client supabase-js) hanno più volte svuotato/ripristinato
+la guida `calipso`. **In ambiente STERILE (solo REST puro) il salvataggio è risultato perfetto e stabile.**
+Quindi NON è un bug del DB/RLS, ma un'interferenza dell'ambiente di test.
+
+- [ ] **Verificare il salvataggio dall'INTERFACCIA admin** in sessione pulita (login fresco, una scheda):
+      modificare un campo, "Salva guida", ricaricare, confermare che il dato resti. Se il `getGuideBySlug`
+      legge dati stantii, valutare di forzare `?t=timestamp` o headers no-cache sulle letture supabase-js.
+- [ ] **NON serve avvisare i clienti** su "schede multiple": era un falso sospetto, smentito dai test.
+- [ ] **Stato dati Calipso (2026-06-14):** ripristinati nel DB nome "Thalassa Green - Calipso" + 17 foto
+      su Storage (10 vere + 7 di test mie da rimuovere) + area_guide zakynthos. Testi (benvenuto, wifi,
+      indirizzo, contatti) da riscrivere — vuoti.
+- [ ] **Completare toggle "Visibile"** per Map e Area guide (toggle-map già in HTML, manca la logica).
+- [ ] **Crediti Netlify**: oggi tanti deploy (75% dei 300/mese gratis, reset 6 luglio). Raggruppare i deploy.
 - [ ] **Multi-cottage** (Thalassa Green) — quando la base è solida.
 - [ ] Pulire: `admin_pin` nel config non serve più (login vero); `config.json` resta solo come demo.
 

@@ -396,7 +396,14 @@
 
           <!-- Map sub-section -->
           <div class="field-group">
-            <h3 class="field-group__title" data-t="mapTitle">How to find us</h3>
+            <div class="field-group__title-row">
+              <h3 class="field-group__title" data-t="mapTitle">How to find us</h3>
+              <label class="section-toggle section-toggle--sm" data-t-title="visible">
+                <input type="checkbox" id="toggle-map" checked>
+                <span class="section-toggle__slider"></span>
+                <span class="section-toggle__label" data-t="visible">Visible</span>
+              </label>
+            </div>
             <div class="field">
               <label for="map-gmaps-url" data-t="mapUrl">Google Maps link</label>
               <input type="url" id="map-gmaps-url" data-t-ph="mapUrlPh" placeholder="https://goo.gl/maps/...">

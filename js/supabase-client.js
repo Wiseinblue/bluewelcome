@@ -4,7 +4,9 @@
    Richiede: supabase-js (CDN) + supabase-config.js prima di questo file.
 ─────────────────────────────────────────────── */
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { autoRefreshToken: true, persistSession: true },
+});
 
 const BlueWelcomeDB = {
   // ── AUTH ──────────────────────────────────────────────
@@ -39,17 +41,25 @@ const BlueWelcomeDB = {
   },
 
   // Salva (aggiorna) il config della guida data.
+  // Prima assicura una sessione valida (rinnovo token), poi scrive con .select()
+  // per verificare che la riga sia stata davvero aggiornata.
   async saveGuide(guideId, config) {
+    // Forza il refresh della sessione se è vicina alla scadenza
+    const { data: sessData } = await sb.auth.getSession();
+    if (!sessData?.session) {
+      return { error: { message: 'session_expired' } };
+    }
     const { data, error } = await sb
       .from('guides')
       .update({ config })
       .eq('id', guideId)
       .select();
-    // Se data è vuoto, l'update non ha toccato righe (es. RLS/sessione) → segnala come errore.
-    if (!error && (!data || data.length === 0)) {
-      return { error: { message: 'no rows updated (session expired?)' } };
+    if (error) return { error };
+    // Se non ha toccato righe, la scrittura NON è andata (sessione/RLS): NON fingere successo.
+    if (!data || data.length === 0) {
+      return { error: { message: 'not_saved' } };
     }
-    return { error };
+    return { error: null };
   },
 
   // Cambia lo slug (indirizzo web) di una guida.

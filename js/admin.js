@@ -930,6 +930,18 @@ async function saveToCloud() {
   const config = buildConfigFromForm();
   if (!config) return;
 
+  // ── RETE DI SICUREZZA anti-svuotamento ──────────────────────────────
+  // Non salvare un config "vuoto sospetto": se manca il nome della proprietà
+  // E la guida salvata aveva contenuti, è quasi certo un errore (form non caricato).
+  const looksEmpty = !config.property?.name && !config.wifi?.network
+    && !(config.property?.photos || []).length;
+  const savedHadContent = savedConfig && (savedConfig.property?.name
+    || (savedConfig.property?.photos || []).length);
+  if (looksEmpty && savedHadContent) {
+    showToast(at('emptyGuard'), 'error');
+    return;
+  }
+
   // Se è la prima guida del proprietario, chiedi uno slug (nome nell'URL).
   if (!currentGuideId) {
     let slug = prompt(at('askSlug'), (config.property?.name || 'guide')
@@ -950,7 +962,14 @@ async function saveToCloud() {
 
   // Guida già esistente: aggiorna
   const { error } = await BlueWelcomeDB.saveGuide(currentGuideId, config);
-  if (error) { showToast(at('saveError'), 'error'); return; }
+  if (error) {
+    if (error.message === 'session_expired' || error.message === 'not_saved') {
+      showToast(at('sessionExpired'), 'error');
+    } else {
+      showToast(at('saveError'), 'error');
+    }
+    return;
+  }
   savedConfig = JSON.parse(JSON.stringify(config));
   showToast(at('saved'));
 }
