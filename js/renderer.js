@@ -429,7 +429,14 @@ function renderContacts(config) {
 
 function renderMap(config) {
   const tab = document.querySelector('[data-subtab="map"]');
-  if (!config.map || (!config.map.embed_url && !config.map.google_maps_url)) {
+  // La sezione "How to find us" va mostrata se c'è QUALSIASI info per arrivare:
+  // indirizzo, link/embed mappa, indicazioni testuali o foto delle indicazioni.
+  const m = config.map || {};
+  const hasSomething = !!config.property?.address
+    || !!m.embed_url || !!m.google_maps_url || !!m.walking_notes
+    || !!m.directions_text
+    || (Array.isArray(m.directions_photos) && m.directions_photos.length > 0);
+  if (!hasSomething) {
     if (tab) tab.classList.add('hidden');
     return;
   }
