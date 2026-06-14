@@ -18,6 +18,9 @@ const BlueWelcomeDB = {
     const { data } = await sb.auth.getUser();
     return data?.user || null;
   },
+  async changePassword(newPassword) {
+    return sb.auth.updateUser({ password: newPassword });
+  },
 
   // ── GUIDE (lato proprietario, richiede login) ─────────
   // Ritorna la PRIMA guida del proprietario loggato (modello "una casa per ora").
@@ -40,6 +43,15 @@ const BlueWelcomeDB = {
     const { error } = await sb
       .from('guides')
       .update({ config })
+      .eq('id', guideId);
+    return { error };
+  },
+
+  // Cambia lo slug (indirizzo web) di una guida.
+  async changeSlug(guideId, newSlug) {
+    const { error } = await sb
+      .from('guides')
+      .update({ slug: newSlug })
       .eq('id', guideId);
     return { error };
   },

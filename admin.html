@@ -544,20 +544,44 @@
         <!-- ADMIN SETTINGS -->
         <section id="section-admin-settings" class="admin-section">
           <div class="admin-section__header">
-            <h2 data-t="settingsTitle">Admin Settings</h2>
-            <p data-t="settingsSubtitle">Access PIN and admin preferences</p>
+            <h2 data-t="settingsTitle">Settings</h2>
+            <p data-t="settingsSubtitle">Your account and password</p>
           </div>
 
           <div class="field-group">
             <div class="field">
-              <label for="admin-pin-new" data-t="pinNew">Admin PIN</label>
-              <input type="password" id="admin-pin-new" data-t-ph="pinNewPh" placeholder="Enter new PIN" maxlength="8" inputmode="numeric" autocomplete="new-password">
-              <span class="field-hint" data-t="pinNewHint">Leave empty to keep the current PIN. Min 4 digits.</span>
+              <label for="guide-slug" data-t="guideUrl">Your guide's web address</label>
+              <div class="slug-field">
+                <span class="slug-field__prefix" id="slug-prefix"></span>
+                <input type="text" id="guide-slug" data-t-ph="guideUrlPh" placeholder="villarosa">
+              </div>
+              <span class="field-hint" data-t="guideUrlHint">Only lowercase letters and numbers. This is the link you give to guests.</span>
+              <button type="button" id="btn-save-slug" class="btn-add" data-t="saveUrl">Save web address</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <label data-t="accountEmail">Your account</label>
+              <p id="account-email" class="account-email"></p>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <h3 class="field-group__title" data-t="changePassword">Change password</h3>
+            <div class="field">
+              <label for="new-password" data-t="newPassword">New password</label>
+              <input type="password" id="new-password" data-t-ph="newPasswordPh" placeholder="At least 6 characters" autocomplete="new-password">
             </div>
             <div class="field">
-              <label for="admin-pin-confirm" data-t="pinConfirm">Confirm PIN</label>
-              <input type="password" id="admin-pin-confirm" data-t-ph="pinConfirmPh" placeholder="Repeat new PIN" maxlength="8" inputmode="numeric" autocomplete="new-password">
+              <label for="new-password-confirm" data-t="confirmPassword">Confirm new password</label>
+              <input type="password" id="new-password-confirm" data-t-ph="confirmPasswordPh" placeholder="Repeat the new password" autocomplete="new-password">
             </div>
+            <button type="button" id="btn-change-password" class="btn-add" data-t="updatePassword">Update password</button>
+          </div>
+
+          <div class="field-group">
+            <button type="button" id="btn-logout" class="btn-logout" data-t="logout">Sign out</button>
           </div>
         </section>
 

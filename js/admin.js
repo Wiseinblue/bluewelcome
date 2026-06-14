@@ -49,6 +49,57 @@ async function enterAdmin() {
   document.getElementById('admin-panel').classList.remove('hidden');
   populateForm(currentConfig);
   updateQRPreview();
+  // Mostra l'email dell'account loggato nella sezione Settings
+  const user = await BlueWelcomeDB.getUser();
+  const emailEl = document.getElementById('account-email');
+  if (emailEl && user) emailEl.textContent = user.email;
+  // Popola il campo slug (indirizzo web della guida)
+  const prefix = document.getElementById('slug-prefix');
+  if (prefix) prefix.textContent = window.location.origin + '/';
+  const slugInput = document.getElementById('guide-slug');
+  if (slugInput) slugInput.value = currentGuideSlug || '';
+}
+
+// Cambio password + logout (sezione Settings)
+function initAccount() {
+  const btnPw = document.getElementById('btn-change-password');
+  if (btnPw) btnPw.addEventListener('click', async () => {
+    const pw = document.getElementById('new-password').value;
+    const pw2 = document.getElementById('new-password-confirm').value;
+    if (!pw || pw.length < 6) { showToast(at('pwTooShort'), 'error'); return; }
+    if (pw !== pw2) { showToast(at('pwMismatch'), 'error'); return; }
+    btnPw.disabled = true;
+    const { error } = await BlueWelcomeDB.changePassword(pw);
+    btnPw.disabled = false;
+    if (error) { showToast(at('pwError'), 'error'); return; }
+    document.getElementById('new-password').value = '';
+    document.getElementById('new-password-confirm').value = '';
+    showToast(at('pwUpdated'));
+  });
+
+  const btnOut = document.getElementById('btn-logout');
+  if (btnOut) btnOut.addEventListener('click', async () => {
+    await BlueWelcomeDB.signOut();
+    window.location.reload();
+  });
+
+  const btnSlug = document.getElementById('btn-save-slug');
+  if (btnSlug) btnSlug.addEventListener('click', async () => {
+    let slug = document.getElementById('guide-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (!slug) { showToast(at('slugEmpty'), 'error'); return; }
+    if (!currentGuideId) { showToast(at('slugSaveFirst'), 'error'); return; }
+    if (slug === currentGuideSlug) return;
+    btnSlug.disabled = true;
+    const { error } = await BlueWelcomeDB.changeSlug(currentGuideId, slug);
+    btnSlug.disabled = false;
+    if (error) {
+      showToast(error.message && error.message.includes('duplicate') ? at('slugTaken') : at('saveError'), 'error');
+      return;
+    }
+    currentGuideSlug = slug;
+    document.getElementById('guide-slug').value = slug;
+    showToast(at('slugUpdated'));
+  });
 }
 
 // ─── Caricamento guida dal database ─────────────────────────────────────────────
@@ -704,22 +755,6 @@ function populateForm(config) {
 function buildConfigFromForm() {
   const accentColor = document.getElementById('prop-accent').value.trim() || '#1a56db';
 
-  const newPinRaw = document.getElementById('admin-pin-new').value.trim();
-  const confirmPinRaw = document.getElementById('admin-pin-confirm').value.trim();
-  let adminPin = currentConfig.admin_pin || '1234';
-
-  if (newPinRaw) {
-    if (newPinRaw.length < 4) {
-      showToast('PIN must be at least 4 digits', 'error');
-      return null;
-    }
-    if (newPinRaw !== confirmPinRaw) {
-      showToast('PINs do not match', 'error');
-      return null;
-    }
-    adminPin = newPinRaw;
-  }
-
   const transport = {};
   const tp = document.getElementById('transport-parking').value.trim();
   const tb = document.getElementById('transport-bus').value.trim();
@@ -785,7 +820,6 @@ function buildConfigFromForm() {
       attractions: document.getElementById('ext-attractions').value.trim(),
     },
     tab_order: getTabOrder(),
-    admin_pin: adminPin,
   };
 }
 
@@ -1017,7 +1051,6 @@ const HELP_MAP = {
   'map-gmaps-url': 'helpMapUrl',
   'map-embed-url': 'helpMapEmbed',
   'map-directions-text': 'helpMapDirections',
-  'admin-pin-new': 'helpPin',
 };
 
 function buildHelpTips() {
@@ -1155,6 +1188,7 @@ async function init() {
   initGuide();
   initColorSwatches();
   initTabOrder();
+  initAccount();
   initLang();
 }
 

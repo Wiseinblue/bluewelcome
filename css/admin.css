@@ -83,6 +83,56 @@
 .tab-order-item.dragging { opacity: 0.5; }
 .tab-order-grip { color: var(--color-text-light); flex-shrink: 0; stroke-width: 3; }
 
+/* Slug field (indirizzo web guida) */
+.slug-field {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.slug-field__prefix {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+  border-right: 1.5px solid var(--color-border);
+}
+.slug-field input {
+  border: none !important;
+  border-radius: 0 !important;
+  flex: 1;
+}
+.slug-field input:focus { outline: none; }
+#btn-save-slug { margin-top: 10px; }
+
+/* Account / settings */
+.account-email {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  padding: 10px 12px;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  display: inline-block;
+}
+.btn-logout {
+  background: none;
+  border: 1.5px solid var(--color-danger);
+  color: var(--color-danger);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-logout:hover { background: rgba(239,68,68,0.08); }
+
 /* Theme toggle (admin) */
 .theme-toggle {
   display: flex; align-items: center; justify-content: center;

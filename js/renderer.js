@@ -85,6 +85,14 @@ function renderHome(config) {
     });
     gallery.appendChild(track);
 
+    // Frecce sinistra/destra (utili soprattutto su desktop dove non c'è lo swipe)
+    const prevBtn = el('button', { class: 'gallery__arrow gallery__arrow--prev', 'aria-label': 'Previous photo' });
+    prevBtn.appendChild(svgIcon('<polyline points="15 18 9 12 15 6"/>'));
+    const nextBtn = el('button', { class: 'gallery__arrow gallery__arrow--next', 'aria-label': 'Next photo' });
+    nextBtn.appendChild(svgIcon('<polyline points="9 18 15 12 9 6"/>'));
+    gallery.appendChild(prevBtn);
+    gallery.appendChild(nextBtn);
+
     // Dots
     const dots = el('div', { class: 'gallery__dots' });
     photos.forEach((_, i) => {
@@ -93,7 +101,7 @@ function renderHome(config) {
     });
     gallery.appendChild(dots);
 
-    // Swipe logic
+    // Navigazione
     let current = 0;
     function goTo(idx) {
       current = (idx + photos.length) % photos.length;
@@ -101,6 +109,8 @@ function renderHome(config) {
       gallery.querySelectorAll('.gallery__dot').forEach((d, i) => d.classList.toggle('active', i === current));
     }
     dots.querySelectorAll('.gallery__dot').forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+    prevBtn.addEventListener('click', () => goTo(current - 1));
+    nextBtn.addEventListener('click', () => goTo(current + 1));
 
     let startX = 0;
     track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
