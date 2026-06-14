@@ -11,7 +11,11 @@ function renderMapSection(config) {
     return;
   }
 
-  if (config.map?.embed_url) {
+  const hasAddress = !!config.property?.address;
+  const hasMapsUrl = !!config.map?.google_maps_url;
+  const hasEmbed = !!config.map?.embed_url;
+
+  if (hasEmbed) {
     const container = el('div', { class: 'map-container' });
     const iframe = document.createElement('iframe');
     iframe.src = config.map.embed_url;
@@ -23,25 +27,31 @@ function renderMapSection(config) {
     container.appendChild(iframe);
     wrapper.appendChild(container);
     sub.dataset.loaded = '1';
-  } else if (config.map?.google_maps_url) {
+  }
+
+  // Card indirizzo + pulsante mappa: mostrata se c'è almeno l'indirizzo O il link maps.
+  // (Prima l'indirizzo si vedeva SOLO col link maps — bug: indirizzo da solo non appariva.)
+  if (hasAddress || hasMapsUrl) {
     const mapCard = el('div', { class: 'map-card' });
     const mapCardIcon = el('div', { class: 'map-card__icon' });
     mapCardIcon.appendChild(svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>', 'width="32" height="32"'));
     mapCard.appendChild(mapCardIcon);
-    if (config.property?.address) {
+    if (hasAddress) {
       mapCard.appendChild(el('p', { class: 'map-card__address', text: config.property.address }));
     }
-    const mapsBtn = el('a', {
-      class: 'pill-btn pill-btn--primary',
-      href: config.map.google_maps_url,
-      target: '_blank',
-      rel: 'noopener noreferrer',
-    });
-    mapsBtn.appendChild(svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'));
-    mapsBtn.appendChild(el('span', { text: t('openMaps') }));
-    mapCard.appendChild(mapsBtn);
+    if (hasMapsUrl) {
+      const mapsBtn = el('a', {
+        class: 'pill-btn pill-btn--primary',
+        href: config.map.google_maps_url,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      });
+      mapsBtn.appendChild(svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'));
+      mapsBtn.appendChild(el('span', { text: t('openMaps') }));
+      mapCard.appendChild(mapsBtn);
+    }
     wrapper.appendChild(mapCard);
-  } else {
+  } else if (!hasEmbed) {
     renderMapOffline(wrapper, config);
   }
 
