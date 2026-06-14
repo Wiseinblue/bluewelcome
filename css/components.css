@@ -1454,8 +1454,8 @@
     height: 320px;
   }
 
-  /* Two-column contacts */
-  #section-contacts {
+  /* Two-column contacts — SOLO quando la sezione è attiva (altrimenti resta visibile impilata) */
+  #section-contacts.active {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-3);
@@ -1465,13 +1465,9 @@
     grid-column: 1 / -1;
   }
 
-  /* Two-column restaurants & attractions */
-  .restaurant-card,
-  .attraction-card {
-    /* Cards already block; sub-section becomes grid */
-  }
-  #sub-restaurants,
-  #sub-attractions {
+  /* Two-column restaurants & attractions — solo se sub-section attiva */
+  #sub-restaurants.active,
+  #sub-attractions.active {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
