@@ -1,6 +1,7 @@
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = `bluewelcome-${CACHE_VERSION}`;
 
+// File da pre-cachare per il funzionamento offline (guida ospite).
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -9,6 +10,8 @@ const STATIC_ASSETS = [
   './css/tokens.css',
   './css/components.css',
   './css/app.css',
+  './js/theme.js',
+  './js/flags.js',
   './js/config-loader.js',
   './js/i18n.js',
   './js/renderer.js',
@@ -25,7 +28,7 @@ const STATIC_ASSETS = [
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS)).catch(() => {})
   );
   self.skipWaiting();
 });
@@ -40,30 +43,38 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
+  // config.json: sempre rete (con fallback cache)
   if (url.pathname.endsWith('config.json')) {
-    event.respondWith(networkFirstConfig(event.request));
+    event.respondWith(networkFirst(event.request));
     return;
   }
 
+  // Codice e stili (HTML/CSS/JS): network-first così gli aggiornamenti si vedono subito,
+  // cache solo come fallback offline. Risolve il problema "modifiche non visibili".
+  if (/\.(html|css|js)$/.test(url.pathname) || url.pathname === '/' || url.pathname.endsWith('/')) {
+    event.respondWith(networkFirst(event.request));
+    return;
+  }
+
+  // Immagini e altri asset: cache-first (cambiano raramente, più veloce).
   event.respondWith(cacheFirst(event.request));
 });
 
-async function networkFirstConfig(request) {
+async function networkFirst(request) {
   const cache = await caches.open(CACHE_NAME);
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
     const response = await fetch(request, { signal: controller.signal });
     clearTimeout(timeoutId);
-    if (response.ok) {
-      cache.put(request, response.clone());
-    }
+    if (response && response.ok) cache.put(request, response.clone());
     return response;
   } catch {
     const cached = await cache.match(request);
-    return cached || new Response('{}', { status: 503 });
+    return cached || new Response('', { status: 503 });
   }
 }
 
@@ -72,7 +83,7 @@ async function cacheFirst(request) {
   if (cached) return cached;
   try {
     const response = await fetch(request);
-    if (response.ok) {
+    if (response && response.ok) {
       const cache = await caches.open(CACHE_NAME);
       cache.put(request, response.clone());
     }
