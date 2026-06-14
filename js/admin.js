@@ -1132,6 +1132,8 @@ function buildLangPicker(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
   container.innerHTML = '';
+  // Con una sola lingua attiva il selettore è inutile: nascondilo.
+  if (ADMIN_LANGS.length < 2) { container.classList.add('hidden'); return; }
   const current = getAdminLang();
   ADMIN_LANGS.forEach(l => {
     const btn = document.createElement('button');

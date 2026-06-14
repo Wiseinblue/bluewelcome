@@ -50,17 +50,17 @@
       </div>
       <div class="admin-header__right">
         <span id="admin-property-name" class="admin-header__property"></span>
-        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
-          <svg class="theme-toggle__sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          <svg class="theme-toggle__moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </button>
-        <div class="lang-picker lang-picker--sm" id="header-lang-picker"></div>
         <button id="btn-guide" class="admin-header__btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
           </svg>
           <span data-t="guideBtn">Guide</span>
         </button>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+          <svg class="theme-toggle__sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="theme-toggle__moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="lang-picker lang-picker--sm" id="header-lang-picker"></div>
         <button id="btn-preview" class="admin-header__btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
@@ -650,30 +650,106 @@
     <div class="guide-modal__backdrop" id="guide-modal-backdrop"></div>
     <div class="guide-modal__card" role="dialog" aria-modal="true">
       <div class="guide-modal__header">
-        <h2 data-t="guideTitle">How to use this editor</h2>
+        <h2>📖 How to use BlueWelcome</h2>
         <button id="guide-modal-close" class="guide-modal__close" aria-label="Close">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <div class="guide-modal__body">
-        <p class="guide-modal__intro" data-t="guideIntro"></p>
-        <ol class="guide-steps">
-          <li data-t="guideStepProperty"></li>
-          <li data-t="guideStepAbout"></li>
-          <li data-t="guideStepWifi"></li>
-          <li data-t="guideStepCheckin"></li>
-          <li data-t="guideStepCheckout"></li>
-          <li data-t="guideStepRules"></li>
-          <li data-t="guideStepContacts"></li>
-          <li data-t="guideStepNearby"></li>
-          <li data-t="guideStepFaq"></li>
-          <li data-t="guideStepSettings"></li>
-          <li data-t="guideStepPhotos"></li>
-          <li data-t="guideStepSave"></li>
+      <div class="guide-modal__body guide-doc">
+
+        <p class="guide-doc__lead">Welcome! This editor is where you build the digital guide your guests will see. It takes about 15 minutes the first time. Fill in the sections on the left, then press <strong>Save guide</strong>. You can come back and change anything, anytime.</p>
+
+        <div class="guide-doc__tip">💡 <strong>Golden rule:</strong> after making changes, always press <strong>Save guide</strong> (top right). Nothing is saved until you do.</div>
+
+        <h3>🚀 Quick start (the 5 essentials)</h3>
+        <p>If you only have a few minutes, fill in these and you already have a working guide:</p>
+        <ol class="guide-doc__list">
+          <li><strong>Property</strong> → house name, city, and at least one photo.</li>
+          <li><strong>Wi-Fi</strong> → network name and password.</li>
+          <li><strong>Check-in</strong> → arrival time and how to get in.</li>
+          <li><strong>Contacts</strong> → at least your phone number.</li>
+          <li>Press <strong>Save guide</strong>. Done — your guide is live!</li>
         </ol>
+
+        <h3>📋 Every section explained</h3>
+
+        <div class="guide-doc__section">
+          <h4>🏠 Property</h4>
+          <p>The basics guests see first. <strong>Name</strong> and <strong>City</strong> are required (marked with *). Add a friendly <strong>Welcome message</strong>, pick your <strong>accent colour</strong>, and upload your <strong>photos</strong> and (optional) <strong>house logo</strong>.</p>
+          <p><strong>Photos:</strong> the first photo is the <em>cover</em> (shown big at the top) — it has a "Cover" badge. Use the small <strong>‹ ›</strong> arrows under each photo to reorder them, and the <strong>✕</strong> to delete. Upload as many as you like.</p>
+        </div>
+
+        <div class="guide-doc__section">
+          <h4>📄 The house <span class="guide-doc__opt">optional</span></h4>
+          <p>Tell the story of the house, the hosts, the area. Don't need it? Switch off <strong>Visible</strong> and the tab disappears for guests.</p>
+        </div>
+
+        <div class="guide-doc__section">
+          <h4>📶 Wi-Fi</h4>
+          <p>Network name and password. A <strong>QR code</strong> is created automatically — guests scan it and connect with one tap, no typing.</p>
+        </div>
+
+        <div class="guide-doc__section">
+          <h4>🔑 Check-in &amp; 🚪 Check-out</h4>
+          <p>The arrival/departure time and clear step-by-step instructions (keys, door code, parking, rubbish, windows). Add <strong>one step at a time</strong> with the "+ Add" button — they show as a numbered list to guests.</p>
+        </div>
+
+        <div class="guide-doc__section">
+          <h4>📋 House rules <span class="guide-doc__opt">optional</span></h4>
+          <p>The rules guests should follow (no smoking, quiet hours, no pets…). Add one rule at a time.</p>
+        </div>
+
+        <div class="guide-doc__section">
+          <h4>📞 Contacts</h4>
+          <p>Add at least one (usually you, the owner). For each contact: name, phone, and whether it's on <strong>WhatsApp</strong>. You can mark a contact as <strong>Emergency</strong> or <strong>Medical</strong> — these get grouped and highlighted for guests.</p>
+        </div>
+
+        <div class="guide-doc__section">
+          <h4>📍 Nearby (Explore)</h4>
+          <p>Everything around the house:</p>
+          <ul class="guide-doc__bullets">
+            <li><strong>How to find us:</strong> address, a Google Maps link, written directions, and photos of the gate/entrance/parking so guests recognise the place. <em>(Tip: for the map, just paste the Google Maps link — if you paste the whole "embed" code, we'll figure it out anyway.)</em></li>
+            <li><strong>Area guide:</strong> if you already have a guide of the area (a website or PDF), link it here and guests get a "Discover the area" button.</li>
+            <li><strong>Restaurants, Attractions, Transport:</strong> your local recommendations.</li>
+          </ul>
+          <p>Each of these has a <strong>Visible</strong> switch — turn off what you don't want to show. Your data stays saved, just hidden.</p>
+        </div>
+
+        <div class="guide-doc__section">
+          <h4>❓ FAQ <span class="guide-doc__opt">optional</span></h4>
+          <p>Common questions and answers (air conditioning, where to put rubbish, early check-in…). Guests tap a question to open the answer.</p>
+        </div>
+
+        <div class="guide-doc__section">
+          <h4>⚙️ Settings</h4>
+          <p>Here you can: change your guide's <strong>web link name</strong> (the word after the address, e.g. <em>.../villarosa</em>), change your <strong>password</strong>, and <strong>log out</strong>.</p>
+        </div>
+
+        <h3>📸 Adding photos (works everywhere)</h3>
+        <p>Anywhere you see <strong>Upload</strong>, you can pick a photo from your phone or computer, or drag it in. Photos are shrunk automatically so the guide stays fast — you don't need to resize anything. You can also paste a web link to an image.</p>
+
+        <h3>👁️ Preview &amp; 🔗 sharing with guests</h3>
+        <ul class="guide-doc__bullets">
+          <li>Press <strong>Preview</strong> (top) to see the guide exactly as your guests will, before saving.</li>
+          <li>Your guide has its own web link (you set the name in Settings). Share that link with guests, or turn it into a <strong>QR code</strong> to print and leave in the house.</li>
+          <li>Guests don't need to log in or install anything — they just open the link.</li>
+        </ul>
+
+        <h3>🌍 Languages</h3>
+        <p>The guide is in English. Guests who speak another language can use their browser's built-in <strong>"Translate page"</strong> (Chrome, Safari, Edge all have it) to read it in their own language automatically — you don't need to do anything.</p>
+
+        <h3>🆘 Troubleshooting</h3>
+        <ul class="guide-doc__bullets">
+          <li><strong>"I saved but don't see the change":</strong> on your phone, fully close the guide tab and reopen it, or pull down to refresh. Changes are saved — it's just the old page in memory.</li>
+          <li><strong>"A tab is missing for guests":</strong> check its <strong>Visible</strong> switch is on, and that you filled in at least some content for it.</li>
+          <li><strong>"I forgot my password":</strong> contact Wise in Blue — we'll reset it for you.</li>
+        </ul>
+
+        <div class="guide-doc__tip">✅ <strong>Remember:</strong> press <strong>Save guide</strong> after every change. That's the one thing you must not forget!</div>
+
       </div>
       <div class="guide-modal__footer">
-        <button id="guide-modal-ok" class="save-bar__btn save-bar__btn--primary" data-t="guideClose">Close</button>
+        <button id="guide-modal-ok" class="save-bar__btn save-bar__btn--primary">Got it</button>
       </div>
     </div>
   </div>

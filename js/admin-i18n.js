@@ -420,17 +420,18 @@ const ADMIN_STRINGS = {
 ADMIN_STRINGS.de = Object.assign({}, ADMIN_STRINGS.en);
 ADMIN_STRINGS.el = Object.assign({}, ADMIN_STRINGS.en);
 
+// Admin in solo inglese (coerente con la guida ospite e la documentazione).
+// Le traduzioni IT in ADMIN_STRINGS restano nel codice ma non sono selezionabili:
+// per riattivarne una basta rimetterla qui.
 const ADMIN_LANGS = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
-  { code: 'it', label: 'Italiano', flag: '🇮🇹' },
-  { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
-  { code: 'el', label: 'Ελληνικά', flag: '🇬🇷' },
 ];
 const ADMIN_DEFAULT_LANG = 'en';
 
 function getAdminLang() {
   const saved = localStorage.getItem('bluewelcome_admin_lang');
-  if (saved && ADMIN_STRINGS[saved]) return saved;
+  // accetta solo lingue ancora attive nel selettore
+  if (saved && ADMIN_LANGS.some(l => l.code === saved) && ADMIN_STRINGS[saved]) return saved;
   return ADMIN_DEFAULT_LANG;
 }
 
