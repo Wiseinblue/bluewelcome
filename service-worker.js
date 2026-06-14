@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CACHE_NAME = `bluewelcome-${CACHE_VERSION}`;
 
 // File da pre-cachare per il funzionamento offline (guida ospite).
@@ -22,6 +22,7 @@ const STATIC_ASSETS = [
   './js/vendor/qrcode.min.js',
   './assets/property-photo.jpg',
   './assets/Logo-WiB.png',
+  './assets/logo-icon.png',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
 ];

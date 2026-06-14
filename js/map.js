@@ -1,3 +1,13 @@
+// Estrae l'URL della mappa anche se è stato salvato l'intero tag <iframe src="...">.
+function sanitizeEmbedUrl(value) {
+  if (!value) return '';
+  const srcMatch = value.match(/src\s*=\s*["']([^"']+)["']/i);
+  if (srcMatch) return srcMatch[1].trim();
+  if (/^https?:\/\//i.test(value)) return value.trim();
+  const urlMatch = value.match(/https?:\/\/[^\s"'<>]+/i);
+  return urlMatch ? urlMatch[0] : '';
+}
+
 function renderMapSection(config) {
   const sub = document.getElementById('sub-map');
   if (!sub) return;
@@ -13,12 +23,15 @@ function renderMapSection(config) {
 
   const hasAddress = !!config.property?.address;
   const hasMapsUrl = !!config.map?.google_maps_url;
-  const hasEmbed = !!config.map?.embed_url;
+  // Difesa: alcune guide salvate prima avevano qui l'intero tag <iframe src="...">
+  // invece del solo URL → la mappa restava grigia. Estraiamo l'URL al volo.
+  const embedUrl = sanitizeEmbedUrl(config.map?.embed_url);
+  const hasEmbed = !!embedUrl;
 
   if (hasEmbed) {
     const container = el('div', { class: 'map-container' });
     const iframe = document.createElement('iframe');
-    iframe.src = config.map.embed_url;
+    iframe.src = embedUrl;
     iframe.loading = 'lazy';
     iframe.setAttribute('allowfullscreen', '');
     iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');

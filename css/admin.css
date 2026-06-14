@@ -1077,6 +1077,50 @@ body {
   right: 4px;
 }
 
+/* Barra ‹ › sotto la miniatura per riordinare le foto */
+.photo-item__tools {
+  display: flex;
+  gap: 4px;
+  width: 90px;
+  justify-content: space-between;
+}
+
+.photo-item__move {
+  flex: 1;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: 6px;
+  font-size: 16px;
+  line-height: 1;
+  padding: 3px 0;
+  cursor: pointer;
+}
+.photo-item__move:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+/* La prima foto è la copertina: la evidenziamo */
+.photo-item--cover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+.photo-item__cover-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 5px;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .photo-upload-bar {
   display: flex;
   gap: 8px;

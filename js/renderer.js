@@ -35,26 +35,53 @@ function makePageFooter(showHomeBtn = true) {
   const branding = el('div', { class: 'app-footer__branding' });
   const poweredLabel = el('span', { class: 'app-footer__powered', text: 'Powered by' });
   branding.appendChild(poweredLabel);
-  const logo = document.createElement('img');
-  logo.src = 'assets/Logo-WiB.png';
-  logo.alt = 'Wise in Blue';
-  logo.className = 'app-footer__logo';
-  logo.loading = 'lazy';
+
+  // Logo (icona) + nome scritto come TESTO → "Wise in Blue" leggibile a qualsiasi
+  // dimensione, indipendente dalla risoluzione del PNG. Tutto cliccabile → sito.
   const link = el('a', {
+    class: 'app-footer__brand-link',
     href: 'https://wiseinblue.com',
     target: '_blank',
     rel: 'noopener noreferrer',
   });
+  const logo = document.createElement('img');
+  logo.src = 'assets/logo-icon.png';   // icona a sfondo trasparente (no scritta: già a fianco come testo)
+  logo.alt = 'Wise in Blue';
+  logo.className = 'app-footer__logo';
+  logo.loading = 'lazy';
   link.appendChild(logo);
+  link.appendChild(el('span', { class: 'app-footer__brand-name', text: 'Wise in Blue' }));
   branding.appendChild(link);
   footer.appendChild(branding);
 
   return footer;
 }
 
+// Intestazione della home (sopra la sezione a due colonne): logo casa (se presente)
+// + nome + città. Il logo/nome della CASA personalizza l'accoglienza; il branding
+// Wise in Blue resta nell'header e nel footer.
+function makeHomeHeader(config) {
+  const header = el('div', { class: 'home-header' });
+  if (config.property.logo) {
+    const logo = el('img', { class: 'home-header__logo', src: config.property.logo, alt: config.property.name, loading: 'eager' });
+    logo.onerror = () => logo.remove();
+    header.appendChild(logo);
+  }
+  const txt = el('div', { class: 'home-header__text' });
+  txt.appendChild(el('h1', { class: 'home-header__name', text: config.property.name }));
+  if (config.property.city) {
+    txt.appendChild(el('p', { class: 'home-header__city', text: config.property.city }));
+  }
+  header.appendChild(txt);
+  return header;
+}
+
 function renderHome(config) {
   const section = document.getElementById('section-home');
   section.innerHTML = '';
+
+  // ── Intestazione casa (logo + nome + città), sopra la sezione a 2 colonne ──
+  section.appendChild(makeHomeHeader(config));
 
   // ── Gallery / Hero ──────────────────────────────────────────────
   const photos = [];
@@ -78,12 +105,6 @@ function renderHome(config) {
       const overlay = el('div', { class: 'hero__overlay' });
       slide.appendChild(img);
       slide.appendChild(overlay);
-      if (i === 0) {
-        const heroContent = el('div', { class: 'hero__content' });
-        heroContent.appendChild(el('h1', { class: 'hero__property-name', text: config.property.name }));
-        heroContent.appendChild(el('p', { class: 'hero__city', text: config.property.city }));
-        slide.appendChild(heroContent);
-      }
       track.appendChild(slide);
     });
     gallery.appendChild(track);
@@ -134,11 +155,7 @@ function renderHome(config) {
       hero.appendChild(img);
     }
     const overlay = el('div', { class: 'hero__overlay' });
-    const heroContent = el('div', { class: 'hero__content' });
-    heroContent.appendChild(el('h1', { class: 'hero__property-name', text: config.property.name }));
-    heroContent.appendChild(el('p', { class: 'hero__city', text: config.property.city }));
     hero.appendChild(overlay);
-    hero.appendChild(heroContent);
     section.appendChild(hero);
   }
 
@@ -458,7 +475,8 @@ function renderMap(config) {
     || !!m.embed_url || !!m.google_maps_url || !!m.walking_notes
     || !!m.directions_text
     || (Array.isArray(m.directions_photos) && m.directions_photos.length > 0);
-  if (!hasSomething) {
+  // Nasconde se il proprietario ha spento il toggle "Visibile" O se non c'è nulla.
+  if (config.sections?.map === false || !hasSomething) {
     if (tab) tab.classList.add('hidden');
     return;
   }
@@ -472,20 +490,30 @@ function renderAreaGuide(config) {
   const tab = document.querySelector('[data-subtab="areaguide"]');
   const sub = document.getElementById('sub-areaguide');
   const url = config.area_guide?.url;
-  if (!url) {
+  // Nasconde se il toggle "Visibile" è spento O se manca il link.
+  if (config.sections?.areaguide === false || !url) {
     if (tab) tab.classList.add('hidden');
     return;
   }
   if (tab) tab.classList.remove('hidden');
   sub.innerHTML = '';
 
-  const card = el('div', { class: 'external-link-card' });
-  card.appendChild(svgIcon('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>', 'class="external-link-card__icon" width="32" height="32"'));
-  if (config.area_guide.title) {
-    card.appendChild(el('p', { class: 'map-card__address', text: config.area_guide.title }));
-  }
+  // Card "tappa" accogliente invece del solo bottone-link spoglio: icona grande,
+  // titolo, una frase che dice cosa si trova, poi il bottone e la nota "nuova scheda".
+  const card = el('div', { class: 'area-guide-card' });
+
+  const iconWrap = el('div', { class: 'area-guide-card__icon' });
+  iconWrap.appendChild(svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>', 'width="40" height="40"'));
+  card.appendChild(iconWrap);
+
+  const title = config.area_guide.title || t('areaGuide');
+  card.appendChild(el('h2', { class: 'area-guide-card__title', text: title }));
+
+  const intro = config.area_guide.description || t('areaGuideIntro');
+  card.appendChild(el('p', { class: 'area-guide-card__intro', text: intro }));
+
   const btn = el('a', {
-    class: 'pill-btn pill-btn--primary',
+    class: 'pill-btn pill-btn--primary area-guide-card__btn',
     href: url,
     target: '_blank',
     rel: 'noopener noreferrer',
@@ -493,6 +521,9 @@ function renderAreaGuide(config) {
   btn.appendChild(el('span', { text: t('discoverArea') }));
   btn.appendChild(svgIcon('<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>'));
   card.appendChild(btn);
+
+  card.appendChild(el('p', { class: 'area-guide-card__hint', text: t('areaGuideOpens') }));
+
   sub.appendChild(card);
   sub.appendChild(makePageFooter());
 }

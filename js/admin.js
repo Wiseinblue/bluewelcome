@@ -140,7 +140,7 @@ function getEmptyConfig() {
     attractions: [],
     transport: { parking: '', bus: '', taxi: '', train: '', airport: '' },
     faq: [],
-    sections: { about: true, rules: true, restaurants: true, attractions: true, transport: true, faq: true },
+    sections: { about: true, rules: true, map: true, areaguide: true, restaurants: true, attractions: true, transport: true, faq: true },
     external_links: { restaurants: '', attractions: '' },
     tab_order: ['home', 'info', 'contacts', 'nearby', 'faq'],
     admin_pin: '1234'
@@ -151,6 +151,8 @@ function getSections() {
   return {
     about:       document.getElementById('toggle-about').checked,
     rules:       document.getElementById('toggle-rules').checked,
+    map:         document.getElementById('toggle-map').checked,
+    areaguide:   document.getElementById('toggle-areaguide').checked,
     restaurants: document.getElementById('toggle-restaurants').checked,
     attractions: document.getElementById('toggle-attractions').checked,
     transport:   document.getElementById('toggle-transport').checked,
@@ -159,10 +161,12 @@ function getSections() {
 }
 
 function populateSections(sections = {}) {
-  const defaults = { about: true, rules: true, restaurants: true, attractions: true, transport: true, faq: true };
+  const defaults = { about: true, rules: true, map: true, areaguide: true, restaurants: true, attractions: true, transport: true, faq: true };
   const s = { ...defaults, ...sections };
   document.getElementById('toggle-about').checked       = s.about;
   document.getElementById('toggle-rules').checked       = s.rules;
+  document.getElementById('toggle-map').checked         = s.map;
+  document.getElementById('toggle-areaguide').checked   = s.areaguide;
   document.getElementById('toggle-restaurants').checked = s.restaurants;
   document.getElementById('toggle-attractions').checked = s.attractions;
   document.getElementById('toggle-transport').checked   = s.transport;
@@ -235,17 +239,22 @@ function addPhotoItem(src = '') {
   const item = document.createElement('div');
   item.className = 'photo-item';
 
-  if (src && src.startsWith('data:')) {
+  // Miniatura SEMPRE visibile: sia per le foto caricate (URL Storage o base64)
+  // sia per i link incollati. Così si vede subito quale foto è e si può
+  // riordinarla o cancellarla senza confusione.
+  if (src) {
     const thumb = document.createElement('img');
     thumb.src = src;
     thumb.className = 'photo-item__thumb';
     thumb.alt = '';
+    thumb.loading = 'lazy';
     item.appendChild(thumb);
     const hidden = document.createElement('input');
     hidden.type = 'hidden';
     hidden.value = src;
     item.appendChild(hidden);
   } else {
+    // Riga vuota: campo testo per incollare un URL a mano.
     const input = document.createElement('input');
     input.type = 'text';
     input.value = src;
@@ -253,10 +262,63 @@ function addPhotoItem(src = '') {
     item.appendChild(input);
   }
 
+  // Barra strumenti: sposta a sinistra / a destra / elimina.
+  const tools = document.createElement('div');
+  tools.className = 'photo-item__tools';
+
+  const leftBtn = document.createElement('button');
+  leftBtn.type = 'button';
+  leftBtn.className = 'photo-item__move';
+  leftBtn.title = at('movePhotoLeft') || 'Move left';
+  leftBtn.innerHTML = '‹'; // ‹
+  leftBtn.addEventListener('click', () => {
+    const prev = item.previousElementSibling;
+    if (prev) list.insertBefore(item, prev);
+    refreshPhotoFirstBadge();
+  });
+
+  const rightBtn = document.createElement('button');
+  rightBtn.type = 'button';
+  rightBtn.className = 'photo-item__move';
+  rightBtn.title = at('movePhotoRight') || 'Move right';
+  rightBtn.innerHTML = '›'; // ›
+  rightBtn.addEventListener('click', () => {
+    const next = item.nextElementSibling;
+    if (next) list.insertBefore(next, item);
+    refreshPhotoFirstBadge();
+  });
+
+  tools.appendChild(leftBtn);
+  tools.appendChild(rightBtn);
+  item.appendChild(tools);
+
   const removeBtn = makeRemoveBtn();
-  removeBtn.addEventListener('click', () => item.remove());
+  removeBtn.addEventListener('click', () => { item.remove(); refreshPhotoFirstBadge(); });
   item.appendChild(removeBtn);
   list.appendChild(item);
+  refreshPhotoFirstBadge();
+}
+
+// Evidenzia la PRIMA foto: è quella che l'ospite vede appena entra (la "copertina").
+// Rende chiaro perché conta l'ordine.
+function refreshPhotoFirstBadge() {
+  const list = document.getElementById('photos-list');
+  if (!list) return;
+  const items = Array.from(list.querySelectorAll('.photo-item'));
+  items.forEach((it, i) => {
+    it.classList.toggle('photo-item--cover', i === 0);
+    let badge = it.querySelector('.photo-item__cover-badge');
+    if (i === 0) {
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'photo-item__cover-badge';
+        it.insertBefore(badge, it.firstChild);
+      }
+      badge.textContent = at('coverPhoto') || 'Cover';
+    } else if (badge) {
+      badge.remove();
+    }
+  });
 }
 
 function getPhotoItems() {
@@ -751,6 +813,7 @@ function populateForm(config) {
 
   const ag = config.area_guide || {};
   document.getElementById('areaguide-title').value = ag.title || '';
+  document.getElementById('areaguide-description').value = ag.description || '';
   document.getElementById('areaguide-url').value = ag.url || '';
   updateAreaGuidePdfStatus(ag.url);
 
@@ -777,6 +840,22 @@ function populateForm(config) {
   populateSections(config.sections);
 }
 
+// Normalizza il campo "mappa da mostrare": l'errore più comune è incollare
+// l'intero tag <iframe src="..."> invece del solo URL. Qui estraiamo l'URL così
+// la mappa si vede comunque. Accetta: solo URL, <iframe src="...">, o testo con dentro un URL.
+function extractEmbedUrl(value) {
+  if (!value) return '';
+  // Caso 1: hanno incollato tutto il tag iframe → prendi il src="..."
+  const srcMatch = value.match(/src\s*=\s*["']([^"']+)["']/i);
+  if (srcMatch) return srcMatch[1].trim();
+  // Caso 2: già un URL pulito
+  if (/^https?:\/\//i.test(value)) return value;
+  // Caso 3: c'è un URL da qualche parte nel testo
+  const urlMatch = value.match(/https?:\/\/[^\s"'<>]+/i);
+  if (urlMatch) return urlMatch[0];
+  return value; // lascialo com'è (verrà ignorato se non valido)
+}
+
 // ─── Read form → config object ────────────────────────────────────────────────
 
 function buildConfigFromForm() {
@@ -795,7 +874,7 @@ function buildConfigFromForm() {
   if (ta) transport.airport = ta;
 
   const mapGmaps = document.getElementById('map-gmaps-url').value.trim();
-  const mapEmbed = document.getElementById('map-embed-url').value.trim();
+  const mapEmbed = extractEmbedUrl(document.getElementById('map-embed-url').value.trim());
   const mapNotes = document.getElementById('map-notes').value.trim();
   const mapDirText = document.getElementById('map-directions-text').value.trim();
   const mapDirPhotos = getDirectionPhotos();
@@ -848,6 +927,7 @@ function buildConfigFromForm() {
     },
     area_guide: {
       title: document.getElementById('areaguide-title').value.trim(),
+      description: document.getElementById('areaguide-description').value.trim(),
       url: document.getElementById('areaguide-url').value.trim(),
     },
     tab_order: getTabOrder(),
@@ -921,7 +1001,9 @@ function initActions() {
     const config = buildConfigFromForm();
     if (!config) return;
     localStorage.setItem('bluewelcome_preview_config', JSON.stringify(config));
-    window.open('index.html', '_blank');
+    // ?preview marca l'anteprima; t= forza il browser a NON riusare la pagina
+    // in cache (evita che il service worker mostri una versione vecchia).
+    window.open('index.html?preview=1&t=' + Date.now(), '_blank');
   });
 }
 

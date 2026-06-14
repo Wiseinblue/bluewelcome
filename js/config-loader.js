@@ -9,7 +9,13 @@ const REQUIRED_FIELDS = [
 
 // Estrae lo slug dal percorso: dominio/villarosa → "villarosa".
 // Ignora index.html, admin e percorsi vuoti.
+// In locale (dove manca il rewrite Netlify /* → index.html) si può anche usare
+// ?guide=calipso, così la guida ospite è testabile senza pubblicare.
 function getSlugFromPath() {
+  const qs = new URLSearchParams(window.location.search).get('guide')
+    || new URLSearchParams(window.location.search).get('slug');
+  if (qs) return qs.toLowerCase().replace(/[^a-z0-9-]/g, '');
+
   const parts = window.location.pathname.split('/').filter(Boolean);
   const last = parts[parts.length - 1] || '';
   if (!last || last === 'index.html' || last === 'admin' || last === 'admin.html') return null;

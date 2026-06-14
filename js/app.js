@@ -108,6 +108,20 @@ function initLangSwitcher() {
   const dropdown = document.getElementById('lang-switcher-dropdown');
   if (!btn || !dropdown) return;
 
+  // Con una sola lingua attiva il selettore è inutile: lo nascondo.
+  // (L'ospite che vuole un'altra lingua usa il "Traduci pagina" del browser.)
+  if (SUPPORTED_LANGUAGES.length < 2) {
+    const wrap = btn.closest('.lang-switcher') || btn;
+    wrap.classList.add('hidden');
+    return;
+  }
+
+  // Mostra nel dropdown solo le opzioni delle lingue attive
+  const activeCodes = SUPPORTED_LANGUAGES.map(l => l.code);
+  dropdown.querySelectorAll('[data-lang]').forEach(opt => {
+    if (!activeCodes.includes(opt.dataset.lang)) opt.remove();
+  });
+
   // Riempie le bandierine SVG nelle opzioni del dropdown
   if (typeof flagSVG === 'function') {
     dropdown.querySelectorAll('.lang-flag[data-flag]').forEach(span => {

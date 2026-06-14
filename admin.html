@@ -444,11 +444,22 @@
 
           <!-- Area guide sub-section -->
           <div class="field-group">
-            <h3 class="field-group__title" data-t="areaGuideTitle">Area guide</h3>
+            <div class="field-group__title-row">
+              <h3 class="field-group__title" data-t="areaGuideTitle">Area guide</h3>
+              <label class="section-toggle section-toggle--sm" data-t-title="visible">
+                <input type="checkbox" id="toggle-areaguide" checked>
+                <span class="section-toggle__slider"></span>
+                <span class="section-toggle__label" data-t="visible">Visible</span>
+              </label>
+            </div>
             <p class="field-hint" data-t="areaGuideHint">If you have a guide of the area (a website, a map, or a PDF), add it here. Guests will see a "Discover the area" button.</p>
             <div class="field">
               <label for="areaguide-title" data-t="areaGuideName">Button label (optional)</label>
               <input type="text" id="areaguide-title" data-t-ph="areaGuideNamePh" placeholder="e.g. Zakynthos area guide">
+            </div>
+            <div class="field">
+              <label for="areaguide-description" data-t="areaGuideDesc">Short description (optional)</label>
+              <textarea id="areaguide-description" rows="2" data-t-ph="areaGuideDescPh" placeholder="What guests will find in the guide. Leave empty for a default text."></textarea>
             </div>
             <div class="field">
               <label for="areaguide-url" data-t="areaGuideLink">Link to a website or PDF</label>

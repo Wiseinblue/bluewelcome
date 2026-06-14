@@ -62,6 +62,18 @@
   z-index: 50;
 }
 
+/* Icona ecosistema Wise in Blue + nome prodotto, affiancati */
+.app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.app-header__icon {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
 .app-header__logo {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
@@ -214,7 +226,7 @@
 .hero__img {
   width: 100%;
   height: 100%;
-  object-fit: contain;   /* foto intera, mai tagliata */
+  object-fit: cover;   /* riempie il riquadro, niente bande */
 }
 
 .hero__overlay {
@@ -243,6 +255,39 @@
 .hero__city {
   font-size: var(--font-size-sm);
   opacity: 0.85;
+}
+
+/* ===== HOME HEADER (logo + nome casa, sopra la foto) ===== */
+/* Mobile: compatto, logo + nome su una riga, foto subito sotto */
+.home-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+.home-header__logo {
+  height: 44px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+.home-header__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.home-header__name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-text);
+}
+.home-header__city {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: 2px;
 }
 
 /* ===== GREETING ===== */
@@ -351,7 +396,7 @@
 .gallery__img {
   width: 100%;
   height: 100%;
-  object-fit: contain;   /* foto intera, mai tagliata */
+  object-fit: cover;   /* riempie il riquadro, niente bande (coerente dark/light) */
   display: block;
 }
 
@@ -787,6 +832,51 @@
   text-align: center;
 }
 .external-link-card__icon { color: var(--color-accent); }
+
+/* Card "Area guide" — versione più accogliente del semplice bottone-link */
+.area-guide-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-5);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+.area-guide-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  color: var(--color-accent);
+  margin-bottom: var(--space-2);
+}
+.area-guide-card__title {
+  font-size: var(--text-xl, 20px);
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-text);
+}
+.area-guide-card__intro {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  max-width: 36ch;
+  margin: 0;
+}
+.area-guide-card__btn {
+  margin-top: var(--space-3);
+}
+.area-guide-card__hint {
+  font-size: 12px;
+  color: var(--color-text-light);
+  margin: 0;
+}
 
 /* ===== DIRECTIONS (How to find us) ===== */
 .directions-block {
@@ -1484,15 +1574,25 @@
   white-space: nowrap;
 }
 
-.app-footer__logo {
-  height: 28px;
-  width: auto;
-  opacity: 0.7;
+.app-footer__brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
   transition: opacity var(--transition-fast);
 }
+.app-footer__brand-link:hover { opacity: 0.8; }
 
-.app-footer__logo:hover {
-  opacity: 1;
+.app-footer__logo {
+  height: 34px;
+  width: auto;
+}
+
+.app-footer__brand-name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
 }
 
 /* ===== HOME BACK BUTTON ===== */
@@ -1581,26 +1681,45 @@
   #section-home.active {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
-    gap: var(--space-6);
+    flex-wrap: wrap;              /* l'intestazione (100%) va sopra, le colonne sotto */
+    align-items: flex-start;      /* le due colonne partono dalla STESSA riga in alto */
+    justify-content: center;
+    gap: var(--space-5) var(--space-8);
     max-width: 1100px;
     margin: 0 auto;
-    padding: var(--space-6) var(--space-4);
+    min-height: calc(100vh - var(--tabbar-height) - 52px);
+    box-sizing: border-box;
+    padding: clamp(var(--space-6), 6vh, 80px) var(--space-4) var(--space-6);
+    align-content: flex-start;
   }
-  /* Colonna sinistra: la foto/carosello, grande */
+  /* Intestazione casa: occupa tutta la riga, sopra le due colonne */
+  #section-home .home-header {
+    flex: 0 0 100%;
+    padding: 0 0 var(--space-2);
+  }
+  /* Su desktop c'è spazio: logo e nome più grandi */
+  #section-home .home-header__logo { height: 60px; max-width: 200px; }
+  #section-home .home-header__name { font-size: var(--font-size-2xl, 28px); }
+  /* Colonna sinistra: la foto/carosello, altezza fissa elegante */
   #section-home .gallery,
   #section-home .hero {
-    flex: 1 1 55%;
-    height: 460px;          /* foto imponente su desktop */
+    flex: 1 1 52%;
+    min-width: 320px;
+    height: 480px;
     border-radius: var(--radius-lg);
     margin: 0;
   }
   /* Colonna destra: le card */
   #section-home .section-inner {
-    flex: 1 1 45%;
+    flex: 1 1 40%;
+    min-width: 300px;
     max-width: 460px;
     padding: 0;
     margin: 0;
+  }
+  /* Il primo elemento della colonna parte ESATTO al top, allineato alla foto */
+  #section-home .section-inner > *:first-child {
+    margin-top: 0;
   }
   #section-home .home-cards {
     max-width: none;
