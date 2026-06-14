@@ -149,22 +149,36 @@ function applyTranslations() {
 window.applyTranslations = applyTranslations;
 
 function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js').then(reg => {
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            document.getElementById('update-banner')?.classList.remove('hidden');
-          }
-        });
+  if (!('serviceWorker' in navigator)) return;
+
+  let reloaded = false; // evita loop di ricarica
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloaded) return;
+    reloaded = true;
+    window.location.reload();
+  });
+
+  navigator.serviceWorker.register('service-worker.js').then(reg => {
+    // Se c'è già un nuovo SW in attesa, attivalo subito
+    if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      if (!newWorker) return;
+      newWorker.addEventListener('statechange', () => {
+        // Appena la nuova versione è pronta, attivala subito (no banner, aggiornamento automatico)
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          newWorker.postMessage({ type: 'SKIP_WAITING' });
+        }
       });
     });
 
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      window.location.reload();
+    // Controlla aggiornamenti all'avvio e quando la pagina torna in primo piano
+    reg.update();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') reg.update();
     });
-  }
+  });
 }
 
 function initUpdateBanner() {

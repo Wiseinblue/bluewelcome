@@ -1,0 +1,24 @@
+# Configurazione Netlify per BlueWelcome
+
+# HTML e service worker: MAI cache (così gli aggiornamenti si vedono subito).
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# I file JS/CSS: il service worker li gestisce in network-first, ma evitiamo
+# che il browser li blocchi in cache troppo a lungo.
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "no-cache"

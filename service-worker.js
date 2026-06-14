@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = `bluewelcome-${CACHE_VERSION}`;
 
 // File da pre-cachare per il funzionamento offline (guida ospite).
@@ -31,6 +31,11 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS)).catch(() => {})
   );
   self.skipWaiting();
+});
+
+// La pagina può chiedere al SW in attesa di attivarsi subito (auto-aggiornamento).
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
