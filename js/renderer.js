@@ -154,13 +154,20 @@ function renderHome(config) {
 
   const homeCards = el('div', { class: 'home-cards' });
 
-  // Card 1 — How to find us (link diretto Maps)
-  if (config.map && config.map.google_maps_url) {
-    const cardMap = el('a', {
+  // Card 1 — How to find us → apre la tab Explore (sezione "come raggiungerci").
+  // Appare se c'è QUALSIASI info per arrivare (indirizzo, mappa, indicazioni, foto).
+  const m = config.map || {};
+  const canFindUs = !!config.property?.address
+    || !!m.embed_url || !!m.google_maps_url || !!m.walking_notes
+    || !!m.directions_text
+    || (Array.isArray(m.directions_photos) && m.directions_photos.length > 0);
+  if (canFindUs) {
+    const cardMap = el('div', {
       class: 'home-card home-card--link',
-      href: config.map.google_maps_url,
-      target: '_blank',
-      rel: 'noopener noreferrer',
+      'data-goto-tab': 'nearby',
+      'data-goto-subtab': 'map',
+      role: 'button',
+      tabindex: '0',
     });
     const cardMapLeft = el('div', { class: 'home-card__left' });
     cardMapLeft.appendChild(svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'));

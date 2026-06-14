@@ -74,6 +74,16 @@ function initNavigation() {
       return;
     }
   });
+
+  // Accessibilità: Enter/Spazio sulle card-scorciatoia (role=button)
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const gotoBtn = e.target.closest('[data-goto-tab]');
+    if (gotoBtn) {
+      e.preventDefault();
+      navigateTo(gotoBtn.dataset.gotoTab, gotoBtn.dataset.gotoSubtab || null);
+    }
+  });
 }
 
 function initCopyWifi(config) {
