@@ -72,6 +72,9 @@ function renderHome(config) {
       const slide = el('div', { class: 'gallery__slide' });
       const img = el('img', { class: 'gallery__img', src, alt: config.property.name, loading: i === 0 ? 'eager' : 'lazy' });
       img.onerror = () => { slide.style.display = 'none'; };
+      // Tocca la foto → apri a schermo intero (lightbox)
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', () => { if (window.openLightbox) window.openLightbox(photos, i); });
       const overlay = el('div', { class: 'hero__overlay' });
       slide.appendChild(img);
       slide.appendChild(overlay);
@@ -126,6 +129,8 @@ function renderHome(config) {
     if (photos.length === 1) {
       const img = el('img', { class: 'hero__img', src: photos[0], alt: config.property.name, loading: 'eager' });
       img.onerror = () => { img.style.display = 'none'; };
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', () => { if (window.openLightbox) window.openLightbox(photos, 0); });
       hero.appendChild(img);
     }
     const overlay = el('div', { class: 'hero__overlay' });

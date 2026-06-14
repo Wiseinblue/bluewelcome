@@ -158,6 +158,65 @@ function applyTranslations() {
 
 window.applyTranslations = applyTranslations;
 
+// ─── LIGHTBOX (foto a schermo intero) ──────────────────────────────────────────
+(function () {
+  let photos = [];
+  let idx = 0;
+
+  function show() {
+    const img = document.getElementById('lightbox-img');
+    const counter = document.getElementById('lightbox-counter');
+    if (img) img.src = photos[idx];
+    if (counter) counter.textContent = `${idx + 1} / ${photos.length}`;
+  }
+  function go(delta) {
+    idx = (idx + delta + photos.length) % photos.length;
+    show();
+  }
+  function open(list, start) {
+    photos = list || [];
+    if (!photos.length) return;
+    idx = start || 0;
+    const lb = document.getElementById('lightbox');
+    // mostra/nascondi le frecce se c'è una sola foto
+    const single = photos.length < 2;
+    document.getElementById('lightbox-prev').style.display = single ? 'none' : '';
+    document.getElementById('lightbox-next').style.display = single ? 'none' : '';
+    show();
+    lb.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    document.getElementById('lightbox').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  window.openLightbox = open;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const lb = document.getElementById('lightbox');
+    if (!lb) return;
+    document.getElementById('lightbox-close').addEventListener('click', close);
+    document.getElementById('lightbox-prev').addEventListener('click', () => go(-1));
+    document.getElementById('lightbox-next').addEventListener('click', () => go(1));
+    // tap sullo sfondo (non sull'immagine/frecce) chiude
+    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (lb.classList.contains('hidden')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') go(-1);
+      else if (e.key === 'ArrowRight') go(1);
+    });
+    // swipe su mobile
+    let sx = 0;
+    lb.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener('touchend', (e) => {
+      const d = sx - e.changedTouches[0].clientX;
+      if (Math.abs(d) > 40) go(d > 0 ? 1 : -1);
+    });
+  });
+})();
+
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
 
