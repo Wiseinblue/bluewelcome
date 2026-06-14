@@ -69,6 +69,11 @@
   letter-spacing: -0.02em;
 }
 
+/* bandiere SVG nel selettore lingua ospite */
+.lang-flag { display: inline-flex; vertical-align: middle; margin-right: 2px; }
+.lang-switcher__btn span { display: inline-flex; align-items: center; gap: 4px; }
+.lang-switcher__option { display: flex; align-items: center; gap: 6px; }
+
 /* ===== HEADER ACTIONS + THEME TOGGLE ===== */
 .app-header__actions {
   display: flex;

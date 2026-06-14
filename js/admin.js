@@ -909,7 +909,7 @@ function buildLangPicker(containerId) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'lang-picker__btn' + (l.code === current ? ' is-active' : '');
-    btn.innerHTML = `<span class="lang-picker__flag">${l.flag}</span><span class="lang-picker__code">${l.code.toUpperCase()}</span>`;
+    btn.innerHTML = `<span class="lang-picker__flag">${flagSVG(l.code)}</span><span class="lang-picker__code">${l.code.toUpperCase()}</span>`;
     btn.title = l.label;
     btn.addEventListener('click', () => {
       setAdminLang(l.code);

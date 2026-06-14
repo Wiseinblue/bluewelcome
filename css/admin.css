@@ -1017,11 +1017,20 @@ body {
 
 .btn-add--upload {
   cursor: pointer;
-  background: var(--color-primary);
-  color: #fff;
-  border-color: var(--color-primary);
+  background: rgba(26, 86, 219, 0.08);
+  color: var(--color-primary);
+  border: 1.5px solid rgba(26, 86, 219, 0.25);
 }
-.btn-add--upload:hover { background: #1e40af; border-color: #1e40af; color: #fff; }
+.btn-add--upload:hover {
+  background: rgba(26, 86, 219, 0.14);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+[data-theme="dark"] .btn-add--upload {
+  background: rgba(59, 130, 246, 0.16);
+  color: var(--color-primary);
+  border-color: rgba(59, 130, 246, 0.35);
+}
 
 /* ===== LANGUAGE PICKER ===== */
 .lang-picker {

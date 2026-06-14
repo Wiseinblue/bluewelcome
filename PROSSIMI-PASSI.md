@@ -44,6 +44,35 @@ Obiettivo: pannello usabile da un proprietario non-tecnico. Deciso insieme:
 - [ ] Completare traduzioni DE (tedesco) ed EL (greco) — ora ereditano l'inglese come fallback.
       Servono i testi tradotti (chiedere a Stefano / traduttore).
 
+## RISOLTI il 2026-06-14 — problemi dell'anteprima online
+
+- [x] **#1 BUG navigazione**: erano due bug — scroll non tornava in cima + sub-section di altre tab
+  restavano attive. Fix in `app.js navigateTo` (spegne tutte le sub-section, attiva la prima della
+  nuova sezione, scrollTo top). Testato.
+- [x] **#2 Bandierine**: emoji → bandiere SVG inline (`js/flags.js`, `flagSVG()`), usate in guida
+  ospite e admin. Si vedono su ogni sistema. Testato.
+- [x] **#3 Colori carichi**: `.btn-add--upload` ora azzurro tenue (non blu pieno), + variante dark. Testato.
+
+> Promemoria: dopo il `git push`, Netlify aggiorna l'anteprima online da solo.
+
+---
+
+## (storico) DA SISTEMARE — emersi dall'anteprima online (2026-06-13)
+
+Sito live di anteprima: **bluewelcome.netlify.app** (deploy automatico da GitHub
+`Wiseinblue/bluewelcome`, ogni push aggiorna). Admin: `/admin`, PIN 1234.
+Tre problemi visti dalla collaboratrice/Stefano, da correggere:
+
+1. **[BUG nav] Tab "Nearby" si apre SOTTO la sezione precedente** invece di sostituirla.
+   La sezione vecchia non viene nascosta. Indagare in `js/app.js` (navigateTo / gestione
+   `.section.active`) e `renderer.js`. Probabile interazione col riordino tab (`applyTabOrder`)
+   o con le sub-section. PRIORITÀ ALTA.
+2. **Bandierine lingua non si vedono online** — i selettori mostrano solo "GB/IT/DE/EL" senza
+   le emoji 🇬🇧🇮🇹🇩🇪🇬🇷 (Windows/alcuni browser non renderizzano le emoji-bandiera).
+   Sostituire le emoji con vere icone bandiera (SVG o immagini) sia nella guida ospite sia nell'admin.
+3. **Colori troppo carichi** — i pulsanti "Upload photos" (e simili in blu pieno) sono troppo
+   invadenti. Ammorbidire: versione più tenue o outline, mantenendo la palette Blue.
+
 ## Multi-unità con varianti (es. Thalassa Green) — DA FARE IN FASE 3 (deciso 2026-06-13)
 
 **Caso reale:** Thalassa Green ha 3 cottage nello stesso spazio. Serve un link diverso per ogni cottage

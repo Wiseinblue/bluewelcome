@@ -1,6 +1,10 @@
 ﻿function navigateTo(tabId, subTabId = null) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab-bar__item').forEach(btn => btn.classList.remove('active'));
+  // Spegne TUTTE le sub-section di TUTTE le sezioni, così non restano attive
+  // sub-section di altre tab (es. sub-about mentre vai su Nearby).
+  document.querySelectorAll('.sub-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sub-tab-bar__item').forEach(btn => btn.classList.remove('active'));
 
   const section = document.getElementById(`section-${tabId}`);
   if (section) section.classList.add('active');
@@ -10,9 +14,21 @@
 
   sessionStorage.setItem('bluewelcome_tab', tabId);
 
-  if (subTabId) {
+  // Se la sezione ha sub-tab e non è stata richiesta una sub specifica,
+  // attiva la prima sub-tab visibile (non nascosta).
+  if (section && section.querySelector('.sub-tab-bar')) {
+    let target = subTabId;
+    if (!target) {
+      const firstBtn = section.querySelector('.sub-tab-bar__item:not(.hidden)');
+      target = firstBtn ? firstBtn.dataset.subtab : null;
+    }
+    if (target) navigateSubTab(tabId, target);
+  } else if (subTabId) {
     navigateSubTab(tabId, subTabId);
   }
+
+  // Torna in cima al cambio tab principale
+  window.scrollTo({ top: 0, behavior: 'auto' });
 }
 
 function navigateSubTab(tabId, subTabId) {
@@ -82,6 +98,13 @@ function initLangSwitcher() {
   const dropdown = document.getElementById('lang-switcher-dropdown');
   if (!btn || !dropdown) return;
 
+  // Riempie le bandierine SVG nelle opzioni del dropdown
+  if (typeof flagSVG === 'function') {
+    dropdown.querySelectorAll('.lang-flag[data-flag]').forEach(span => {
+      span.innerHTML = flagSVG(span.dataset.flag);
+    });
+  }
+
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
     dropdown.classList.toggle('hidden');
@@ -104,7 +127,10 @@ function updateLangSwitcherUI() {
   if (btn) {
     const langData = SUPPORTED_LANGUAGES.find(l => l.code === current);
     const span = btn.querySelector('span');
-    if (span && langData) span.textContent = langData.code.toUpperCase();
+    if (span && langData) {
+      const flag = (typeof flagSVG === 'function') ? flagSVG(current) + ' ' : '';
+      span.innerHTML = flag + langData.code.toUpperCase();
+    }
   }
   document.querySelectorAll('[data-lang]').forEach(opt => {
     opt.classList.toggle('active', opt.dataset.lang === current);
