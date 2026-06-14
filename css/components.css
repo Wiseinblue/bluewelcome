@@ -1574,6 +1574,37 @@
     margin-left: auto;
     margin-right: auto;
   }
+
+  /* ===== HOME a due colonne SU DESKTOP =====
+     Foto/carosello grande a sinistra, card (benvenuto/meteo/scorciatoie) a destra.
+     Su mobile resta tutto impilato (questa regola vale solo da 768px in su). */
+  #section-home.active {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-6);
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4);
+  }
+  /* Colonna sinistra: la foto/carosello, grande */
+  #section-home .gallery,
+  #section-home .hero {
+    flex: 1 1 55%;
+    height: 460px;          /* foto imponente su desktop */
+    border-radius: var(--radius-lg);
+    margin: 0;
+  }
+  /* Colonna destra: le card */
+  #section-home .section-inner {
+    flex: 1 1 45%;
+    max-width: 460px;
+    padding: 0;
+    margin: 0;
+  }
+  #section-home .home-cards {
+    max-width: none;
+  }
 }
 
 /* ===== RESPONSIVE — SMALL PHONES (≤360px) ===== */
