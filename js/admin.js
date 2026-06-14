@@ -218,7 +218,9 @@ function getPhotoItems() {
   }).filter(v => v.length > 0);
 }
 
-async function resizeImageToBase64(file, maxSize = 1200) {
+// Comprime un'immagine su canvas. maxSize 1600 ora che le foto vanno su Storage
+// (non più dentro il config) → più qualità, peso comunque basso.
+function resizeImageToCanvas(file, maxSize = 1600) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = e => {
@@ -233,7 +235,7 @@ async function resizeImageToBase64(file, maxSize = 1200) {
         canvas.width = width;
         canvas.height = height;
         canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', 0.82));
+        resolve(canvas);
       };
       img.onerror = reject;
       img.src = e.target.result;
@@ -243,13 +245,32 @@ async function resizeImageToBase64(file, maxSize = 1200) {
   });
 }
 
+// Mantengo il vecchio nome per compatibilità (restituisce base64).
+async function resizeImageToBase64(file, maxSize = 1200) {
+  const canvas = await resizeImageToCanvas(file, maxSize);
+  return canvas.toDataURL('image/jpeg', 0.82);
+}
+
+// Comprime e CARICA la foto su Supabase Storage. Ritorna l'URL pubblico.
+// Se l'upload fallisce (offline o storage non pronto), ricade su base64 nel config.
+async function uploadImageFile(file) {
+  const canvas = await resizeImageToCanvas(file);
+  const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.82));
+  if (typeof BlueWelcomeDB !== 'undefined' && blob) {
+    const { url, error } = await BlueWelcomeDB.uploadPhoto(blob, 'jpg');
+    if (!error && url) return url;
+    console.warn('upload storage fallito, uso base64:', error);
+  }
+  return canvas.toDataURL('image/jpeg', 0.82); // fallback
+}
+
 async function handlePhotoUpload(e) {
   const files = Array.from(e.target.files);
   e.target.value = '';
   for (const file of files) {
     try {
-      const base64 = await resizeImageToBase64(file);
-      addPhotoItem(base64);
+      const url = await uploadImageFile(file);
+      addPhotoItem(url);
     } catch {
       showToast('Failed to process ' + file.name, 'error');
     }
@@ -382,8 +403,8 @@ async function handleDirectionPhotoUpload(files) {
   for (const file of Array.from(files)) {
     if (!file.type.startsWith('image/')) continue;
     try {
-      const base64 = await resizeImageToBase64(file);
-      addDirectionPhotoItem({ url: base64 });
+      const url = await uploadImageFile(file);
+      addDirectionPhotoItem({ url });
     } catch {
       showToast('Failed to process ' + file.name, 'error');
     }
@@ -421,7 +442,7 @@ function initSinglePhoto(opts) {
     const file = Array.from(files).find(f => f.type.startsWith('image/'));
     if (!file) return;
     try {
-      hidden.value = await resizeImageToBase64(file);
+      hidden.value = await uploadImageFile(file);
       render();
     } catch {
       showToast('Failed to process ' + file.name, 'error');

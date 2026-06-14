@@ -56,6 +56,22 @@ const BlueWelcomeDB = {
     return { data, error };
   },
 
+  // ── STORAGE FOTO ──────────────────────────────────────
+  // Carica un'immagine (Blob/File) nel bucket guide-photos, nella cartella del
+  // proprietario (owner_id/...), e ritorna l'URL pubblico.
+  async uploadPhoto(blob, ext = 'jpg') {
+    const user = await this.getUser();
+    if (!user) return { error: { message: 'not logged in' } };
+    const filename = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await sb.storage.from('guide-photos').upload(filename, blob, {
+      contentType: blob.type || 'image/jpeg',
+      upsert: false,
+    });
+    if (error) return { error };
+    const { data } = sb.storage.from('guide-photos').getPublicUrl(filename);
+    return { url: data.publicUrl };
+  },
+
   // ── GUIDE (lato ospite, pubblico, no login) ───────────
   async getGuideBySlug(slug) {
     const { data, error } = await sb

@@ -121,8 +121,12 @@ Schema in `supabase/schema.sql` (tabella `guides`, RLS, GRANT). Modello: **gesti
 - [x] Primo account proprietario di test: `info@wiseinblue.com` (creato in Supabase Auth, auto-confirm).
 - [ ] **Da fare online**: il `_redirects` Netlify deve mappare gli slug → index.html (già presente
       `/* /index.html 200`, verificare che `/villatest` carichi). 
-- [ ] **Foto su Supabase Storage** (ora sono ancora base64 nel config): vedi sezione foto sotto.
-- [ ] **Ping anti-pausa** Supabase (free va in pausa dopo 7gg inattività).
+- [x] **Foto su Supabase Storage** (2026-06-14): upload comprime (1600px, q.82) → carica su bucket
+      pubblico `guide-photos` (cartella per proprietario) → salva l'URL nel config. Fallback a base64
+      se l'upload fallisce. `uploadImageFile()` in admin.js + `uploadPhoto()` in supabase-client.js.
+      SQL bucket+policy in `supabase/storage.sql`. Testato: foto su Storage, URL pubblico raggiungibile.
+- [x] **Ping anti-pausa** (2026-06-14): GitHub Actions `.github/workflows/keep-supabase-awake.yml`,
+      pinga Supabase ogni giorno alle 06:00 UTC (+ run manuale). Si attiva da solo dopo il push.
 - [ ] **Multi-cottage** (Thalassa Green) — quando la base è solida.
 - [ ] Pulire: `admin_pin` nel config non serve più (login vero); `config.json` resta solo come demo.
 
