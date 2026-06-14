@@ -33,6 +33,7 @@ const UI_STRINGS = {
     lateCheckout: 'Check-out posticipato',
     howToFindUs: 'Come raggiungerci',
     discoverArea: 'Scopri la zona',
+    areaGuide: 'Guida zona',
   },
   en: {
     home: 'Home',
@@ -68,6 +69,7 @@ const UI_STRINGS = {
     lateCheckout: 'Late check-out',
     howToFindUs: 'How to find us',
     discoverArea: 'Discover the area',
+    areaGuide: 'Area guide',
   },
 };
 

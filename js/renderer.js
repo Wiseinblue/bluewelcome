@@ -466,6 +466,37 @@ function renderMap(config) {
   renderMapSection(config);
 }
 
+// Sub-tab "Area guide": pulsante verso la guida della zona del proprietario
+// (link a un sito esterno o a un PDF). Si nasconde se non è configurata.
+function renderAreaGuide(config) {
+  const tab = document.querySelector('[data-subtab="areaguide"]');
+  const sub = document.getElementById('sub-areaguide');
+  const url = config.area_guide?.url;
+  if (!url) {
+    if (tab) tab.classList.add('hidden');
+    return;
+  }
+  if (tab) tab.classList.remove('hidden');
+  sub.innerHTML = '';
+
+  const card = el('div', { class: 'external-link-card' });
+  card.appendChild(svgIcon('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>', 'class="external-link-card__icon" width="32" height="32"'));
+  if (config.area_guide.title) {
+    card.appendChild(el('p', { class: 'map-card__address', text: config.area_guide.title }));
+  }
+  const btn = el('a', {
+    class: 'pill-btn pill-btn--primary',
+    href: url,
+    target: '_blank',
+    rel: 'noopener noreferrer',
+  });
+  btn.appendChild(el('span', { text: t('discoverArea') }));
+  btn.appendChild(svgIcon('<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>'));
+  card.appendChild(btn);
+  sub.appendChild(card);
+  sub.appendChild(makePageFooter());
+}
+
 // Se la sezione ha un link esterno configurato, mostra un pulsante verso quel sito
 // invece dell'elenco interno. Ritorna true se ha gestito la sezione (link esterno).
 function renderExternalLink(subId, url, labelKey) {
@@ -695,6 +726,7 @@ function renderAll(config) {
   renderRules(config);
   renderContacts(config);
   renderMap(config);
+  renderAreaGuide(config);
   renderRestaurants(config);
   renderAttractions(config);
   renderTransport(config);

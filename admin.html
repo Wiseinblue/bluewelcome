@@ -435,6 +435,31 @@
             </div>
           </div>
 
+          <!-- Area guide sub-section -->
+          <div class="field-group">
+            <h3 class="field-group__title" data-t="areaGuideTitle">Area guide</h3>
+            <p class="field-hint" data-t="areaGuideHint">If you have a guide of the area (a website, a map, or a PDF), add it here. Guests will see a "Discover the area" button.</p>
+            <div class="field">
+              <label for="areaguide-title" data-t="areaGuideName">Button label (optional)</label>
+              <input type="text" id="areaguide-title" data-t-ph="areaGuideNamePh" placeholder="e.g. Zakynthos area guide">
+            </div>
+            <div class="field">
+              <label for="areaguide-url" data-t="areaGuideLink">Link to a website or PDF</label>
+              <input type="url" id="areaguide-url" data-t-ph="areaGuideLinkPh" placeholder="https://...">
+            </div>
+            <div class="field">
+              <label data-t="areaGuideUpload">…or upload a PDF</label>
+              <div class="photo-upload-bar">
+                <label class="btn-add btn-add--upload" id="btn-areaguide-pdf-label">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <span data-t="uploadPdf">Upload PDF</span>
+                  <input type="file" id="areaguide-pdf-input" accept="application/pdf" style="display:none">
+                </label>
+                <span id="areaguide-pdf-status" class="field-hint"></span>
+              </div>
+            </div>
+          </div>
+
           <!-- Restaurants sub-section -->
           <div class="field-group">
             <div class="field-group__title-row">

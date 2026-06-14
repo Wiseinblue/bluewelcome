@@ -450,6 +450,28 @@ function getDirectionPhotos() {
   })).filter(p => p.url);
 }
 
+// Mostra lo stato del PDF guida zona (se il link è un PDF caricato/esterno)
+function updateAreaGuidePdfStatus(url) {
+  const status = document.getElementById('areaguide-pdf-status');
+  if (!status) return;
+  if (url && /\.pdf($|\?)/i.test(url)) {
+    status.textContent = at('pdfLoaded');
+  } else {
+    status.textContent = '';
+  }
+}
+
+async function handleAreaGuidePdfUpload(file) {
+  if (!file || file.type !== 'application/pdf') { showToast(at('pdfOnly'), 'error'); return; }
+  const status = document.getElementById('areaguide-pdf-status');
+  if (status) status.textContent = at('pdfUploading');
+  const { url, error } = await BlueWelcomeDB.uploadFile(file, 'pdf');
+  if (error || !url) { showToast(at('saveError'), 'error'); if (status) status.textContent = ''; return; }
+  document.getElementById('areaguide-url').value = url;
+  updateAreaGuidePdfStatus(url);
+  showToast(at('pdfDone'));
+}
+
 async function handleDirectionPhotoUpload(files) {
   for (const file of Array.from(files)) {
     if (!file.type.startsWith('image/')) continue;
@@ -727,6 +749,11 @@ function populateForm(config) {
   document.getElementById('direction-photos-list').innerHTML = '';
   (m.directions_photos || []).forEach(p => addDirectionPhotoItem(p));
 
+  const ag = config.area_guide || {};
+  document.getElementById('areaguide-title').value = ag.title || '';
+  document.getElementById('areaguide-url').value = ag.url || '';
+  updateAreaGuidePdfStatus(ag.url);
+
   const ext = config.external_links || {};
   document.getElementById('ext-restaurants').value = ext.restaurants || '';
   document.getElementById('ext-attractions').value = ext.attractions || '';
@@ -818,6 +845,10 @@ function buildConfigFromForm() {
     external_links: {
       restaurants: document.getElementById('ext-restaurants').value.trim(),
       attractions: document.getElementById('ext-attractions').value.trim(),
+    },
+    area_guide: {
+      title: document.getElementById('areaguide-title').value.trim(),
+      url: document.getElementById('areaguide-url').value.trim(),
     },
     tab_order: getTabOrder(),
   };
@@ -939,6 +970,11 @@ function initAddButtons() {
   });
   setupDropzone('direction-photos-dropzone', handleDirectionPhotoUpload);
   setupDropzone('photos-list', (files) => handlePhotoUpload({ target: { files, value: '' } }));
+  const pdfInput = document.getElementById('areaguide-pdf-input');
+  if (pdfInput) pdfInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) handleAreaGuidePdfUpload(e.target.files[0]);
+    e.target.value = '';
+  });
   document.getElementById('btn-add-contact').addEventListener('click', () => addContactItem());
   document.getElementById('btn-add-restaurant').addEventListener('click', () => addRestaurantItem());
   document.getElementById('btn-add-attraction').addEventListener('click', () => addAttractionItem());

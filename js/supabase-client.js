@@ -40,10 +40,15 @@ const BlueWelcomeDB = {
 
   // Salva (aggiorna) il config della guida data.
   async saveGuide(guideId, config) {
-    const { error } = await sb
+    const { data, error } = await sb
       .from('guides')
       .update({ config })
-      .eq('id', guideId);
+      .eq('id', guideId)
+      .select();
+    // Se data è vuoto, l'update non ha toccato righe (es. RLS/sessione) → segnala come errore.
+    if (!error && (!data || data.length === 0)) {
+      return { error: { message: 'no rows updated (session expired?)' } };
+    }
     return { error };
   },
 
@@ -77,6 +82,21 @@ const BlueWelcomeDB = {
     const filename = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const { error } = await sb.storage.from('guide-photos').upload(filename, blob, {
       contentType: blob.type || 'image/jpeg',
+      upsert: false,
+    });
+    if (error) return { error };
+    const { data } = sb.storage.from('guide-photos').getPublicUrl(filename);
+    return { url: data.publicUrl };
+  },
+
+  // Carica un file generico (es. PDF) nello stesso bucket, cartella del proprietario.
+  async uploadFile(file, ext) {
+    const user = await this.getUser();
+    if (!user) return { error: { message: 'not logged in' } };
+    const safeExt = ext || (file.name.split('.').pop() || 'pdf');
+    const filename = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${safeExt}`;
+    const { error } = await sb.storage.from('guide-photos').upload(filename, file, {
+      contentType: file.type || 'application/octet-stream',
       upsert: false,
     });
     if (error) return { error };
